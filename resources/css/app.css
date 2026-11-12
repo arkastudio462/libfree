@@ -1,0 +1,225 @@
+/*
+ * Urutan layer dibuat eksplisit: CSS Google Fonts (yang mendefinisikan
+ * `.material-symbols-outlined { font-size: 24px }`) harus berada DI BAWAH
+ * utility Tailwind, persis seperti template asli (link font dimuat sebelum
+ * style Tailwind CDN). Tanpa ini, `text-sm`/`text-base` kalah dan semua ikon
+ * berukuran 24px.
+ */
+@layer fonts, theme, base, components, utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap')
+    layer(fonts);
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap')
+    layer(fonts);
+
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@plugin '@tailwindcss/forms';
+
+@theme {
+    --font-sans: 'Plus Jakarta Sans', sans-serif;
+    --font-display: 'Space Grotesk', sans-serif;
+
+    /*
+     * Lebar container desktop: template asli memakai max-w-7xl (1280px),
+     * dinaikkan ke 1440px agar ruang di layar lebar lebih terpakai.
+     * Ubah nilai ini untuk menyetel ulang lebar konten.
+     */
+    --container-8xl: 90rem;
+
+    --color-brand-cream: #fafaf7;
+    --color-brand-dark: #1a1a1a;
+    --color-brand-coral: #f28482;
+    --color-brand-coral-light: #fce4e4;
+    --color-brand-yellow: #f4b942;
+    --color-brand-yellow-light: #fef5e7;
+    --color-brand-green: #6baf7b;
+    --color-brand-green-light: #e8f5e9;
+    --color-brand-blue: #4db8f0;
+    --color-brand-blue-light: #e5f6fd;
+    --color-brand-lavender: #ede7f6;
+    --color-brand-peach: #ffebe6;
+    --color-brand-chart-pink: #f5c6c6;
+    --color-brand-muted: #666666;
+
+    --shadow-solid: 3px 3px 0px #1a1a1a;
+    --shadow-solid-lg: 5px 5px 0px #1a1a1a;
+
+    /*
+     * Tailwind v4 memakai line-height unitless (mis. 1.3333) untuk text-*,
+     * sedangkan v3 (template) memakai nilai absolut (1rem). Unitless ikut
+     * diwariskan ke anak yang font-size-nya berbeda sehingga tinggi baris
+     * melenceng; nilai absolut di bawah menyamakan hasilnya dengan template.
+     */
+    --text-xs--line-height: 1rem;
+    --text-sm--line-height: 1.25rem;
+    --text-base--line-height: 1.5rem;
+    --text-lg--line-height: 1.75rem;
+    --text-xl--line-height: 1.75rem;
+    --text-2xl--line-height: 2rem;
+    --text-3xl--line-height: 2.25rem;
+    --text-4xl--line-height: 2.5rem;
+    --text-5xl--line-height: 1;
+    --text-6xl--line-height: 1;
+    --text-7xl--line-height: 1;
+    --text-8xl--line-height: 1;
+    --text-9xl--line-height: 1;
+
+    /* v3 shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05) */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    /* v3 tidak punya shadow-xs; template memakainya sebagai no-op */
+    --shadow-xs: 0 0 transparent;
+
+    /* Palet abu-abu v3 (template) — nilai v4 sedikit berbeda */
+    --color-gray-50: #f9fafb;
+    --color-gray-100: #f3f4f6;
+    --color-gray-200: #e5e7eb;
+    --color-gray-400: #9ca3af;
+    --color-neutral-50: #fafafa;
+    --color-neutral-100: #f5f5f5;
+    --color-neutral-200: #e5e5e5;
+    --color-neutral-400: #a3a3a3;
+    --color-neutral-500: #737373;
+    --color-neutral-600: #525252;
+    --color-neutral-700: #404040;
+    --color-neutral-800: #262626;
+}
+
+/* Compat Tailwind v3 config: borderWidth['1.5'] di template */
+@layer utilities {
+    .border-1\.5 {
+        border-width: 1.5px;
+    }
+
+    /* v3: gradient memakai interpolasi sRGB, v4 default-nya oklab */
+    .bg-gradient-to-r {
+        --tw-gradient-position: to right;
+    }
+
+    /*
+     * Di template asli reset @tailwindcss/forms tidak berlapis, sehingga
+     * `[type=checkbox]:checked` (specificity 0,2,0) menang atas utility
+     * `border-brand-dark`. Di v4 reset ada di layer base dan kalah; tegaskan lagi.
+     */
+    [type='checkbox']:checked,
+    [type='radio']:checked {
+        border-color: transparent;
+    }
+}
+
+/* v3 preflight: tombol memakai cursor pointer */
+@layer base {
+    button:not(:disabled),
+    [role='button']:not(:disabled) {
+        cursor: pointer;
+    }
+
+    /* v4 preflight mereset padding semua elemen; v3 membiarkan default UA <option> */
+    option {
+        padding: revert;
+    }
+}
+
+/*
+ * Custom styles hasil ekstraksi public/templates/*\/code.html.
+ * Diletakkan di layer components agar utility Tailwind tetap menang saat
+ * konflik — persis seperti template asli, di mana blok <style> berada sebelum
+ * style utility yang di-inject Tailwind CDN.
+ */
+@layer components {
+    body {
+        background-color: #fafaf7;
+        color: #1a1a1a;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        overflow-x: hidden;
+    }
+
+    /* Neo-brutalist / Soft outline cards */
+    .neo-card {
+        border: 2px solid #1a1a1a;
+        border-radius: 1.5rem;
+        background-color: #ffffff;
+        transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease;
+    }
+
+    .neo-card-sm {
+        border: 2px solid #1a1a1a;
+        border-radius: 1.25rem;
+        background-color: #ffffff;
+    }
+
+    .neo-pill {
+        border: 2px solid #1a1a1a;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        transition:
+            transform 0.12s ease,
+            opacity 0.12s ease;
+    }
+
+    .neo-pill:hover {
+        transform: translateY(-1px);
+    }
+
+    .neo-pill:active {
+        transform: translateY(1px);
+    }
+
+    /* Concentric background rings */
+    .bg-rings {
+        background-image:
+            radial-gradient(circle, transparent 20%, rgba(107, 175, 123, 0.08) 21%, transparent 22%),
+            radial-gradient(circle, transparent 40%, rgba(244, 185, 66, 0.08) 41%, transparent 42%),
+            radial-gradient(circle, transparent 60%, rgba(242, 132, 130, 0.06) 61%, transparent 62%);
+        background-size: 800px 800px;
+        background-position: top center;
+    }
+
+    /*
+     * Di template asli reset @tailwindcss/forms berada setelah blok <style>,
+     * jadi border-radius kontrol form menang atas `.neo-pill` (input menjadi
+     * kotak). Di v4 reset itu ada di layer base sehingga kalah; samakan di sini.
+     */
+    [type='text'],
+    input:where(:not([type])),
+    [type='email'],
+    [type='url'],
+    [type='password'],
+    [type='number'],
+    [type='date'],
+    [type='datetime-local'],
+    [type='month'],
+    [type='search'],
+    [type='tel'],
+    [type='time'],
+    [type='week'],
+    [multiple],
+    textarea,
+    select {
+        border-radius: 0;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #fafaf7;
+        border-left: 2px solid #1a1a1a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #f4b942;
+        border: 2px solid #1a1a1a;
+        border-radius: 9999px;
+    }
+}
