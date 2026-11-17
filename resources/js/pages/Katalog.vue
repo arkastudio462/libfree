@@ -1,57 +1,61 @@
 <template>
-<main class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20 pb-28"><div class="flex flex-col w-full">
+<main class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 lg:pb-16">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Backdrop drawer mobile -->
+<div v-if="sidebarOpen" class="fixed inset-0 z-[55] bg-brand-dark/40 backdrop-blur-sm lg:hidden" @click="sidebarOpen = false"></div>
+<!-- LEFT SIDEBAR: HERO, PANDUAN KURASI, FILTER, STATUS (drawer di mobile) -->
+<aside class="fixed inset-y-0 left-0 z-[60] w-[86%] max-w-sm overflow-y-auto bg-brand-cream border-r-2 border-brand-dark p-4 space-y-6 transition-transform duration-300 ease-out lg:static lg:z-auto lg:col-span-3 lg:w-auto lg:max-w-none lg:overflow-visible lg:border-0 lg:bg-transparent lg:p-0 lg:translate-x-0" id="catalog-sidebar" aria-label="Filter dan informasi katalog" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full invisible lg:visible'">
+<div class="flex items-center justify-between gap-3 lg:hidden">
+<span class="font-display font-extrabold text-lg text-brand-dark">Filter &amp; Info Katalog</span>
+<button class="w-8 h-8 rounded-full border-2 border-brand-dark bg-white hover:bg-brand-yellow-light flex items-center justify-center" type="button" aria-label="Tutup sidebar" @click="sidebarOpen = false">
+<span class="material-symbols-outlined text-base">close</span>
+</button>
+</div>
 <!-- TOP HERO & SEARCH CARD -->
-<section class="w-full mb-8">
-<div class="neo-card p-6 sm:p-10 bg-white shadow-solid relative overflow-hidden">
+<section class="w-full">
+<div class="neo-card p-5 bg-white shadow-solid relative overflow-hidden">
 <!-- Decorative Concentric Circles inside card -->
 <div class="absolute -right-16 -top-16 w-56 h-56 rounded-full border-2 border-brand-dark/10 pointer-events-none"></div>
 <div class="absolute -right-8 -top-8 w-40 h-40 rounded-full border-2 border-brand-dark/10 pointer-events-none"></div>
 <!-- Breadcrumb -->
-<nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs font-bold text-brand-muted mb-4">
-<a class="hover:text-brand-dark transition-colors flex items-center gap-1" href="#">
+<nav aria-label="Breadcrumb" class="relative flex items-center gap-2 text-[11px] font-bold text-brand-muted mb-3 flex-wrap">
+<RouterLink class="hover:text-brand-dark transition-colors flex items-center gap-1" to="/">
 <span class="material-symbols-outlined text-sm">home</span>
           Beranda
-        </a>
+        </RouterLink>
 <span>/</span>
 <span class="text-brand-dark px-2 py-0.5 rounded-full bg-brand-yellow/30 border border-brand-dark/20">Koleksi &amp; Katalog</span>
 </nav>
-<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-<div class="max-w-3xl">
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-green-light border-2 border-brand-dark text-xs font-extrabold text-brand-dark mb-3">
+<div class="relative">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-green-light border-2 border-brand-dark text-[11px] font-extrabold text-brand-dark mb-2.5">
 <span class="w-2 h-2 rounded-full bg-brand-green animate-pulse"></span>
             Akses Publik Bebas Royalti &amp; Terbuka
           </div>
-<h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-display tracking-tight text-brand-dark leading-tight sm:leading-10 lg:leading-none">
+<h1 class="text-2xl font-extrabold font-display tracking-tight text-brand-dark leading-tight">
             Katalog &amp; Koleksi Buku Terbuka
           </h1>
-<p class="mt-3 text-sm sm:text-base text-brand-muted font-medium leading-relaxed sm:leading-6 max-w-2xl">
-            Jelajahi lebih dari <strong class="text-brand-dark font-bold">25.000 naskah klasik</strong>, ensiklopedia, sastra nusantara, dan buku sains gratis tanpa batasan kuota unduh harian.
+<p class="mt-2 text-xs text-brand-muted font-medium leading-relaxed">
+            Jelajahi <strong class="text-brand-dark font-bold">naskah klasik nusantara</strong> yang telah diverifikasi status lisensinya, ensiklopedia, sastra, dan buku sains gratis tanpa batasan kuota unduh harian.
           </p>
-</div>
 <!-- Quick Summary Micro-badge -->
-<div class="neo-card-sm p-4 bg-brand-cream border-2 border-brand-dark shrink-0 flex items-center gap-4 self-start lg:self-auto">
-<div class="w-11 h-11 rounded-2xl bg-brand-coral border-2 border-brand-dark flex items-center justify-center font-bold text-white shadow-sm">
-<span class="material-symbols-outlined text-brand-dark">auto_stories</span>
+<div class="neo-card-sm mt-4 p-3 bg-brand-cream border-2 border-brand-dark flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-brand-coral border-2 border-brand-dark flex items-center justify-center font-bold text-white shadow-sm shrink-0">
+<span class="material-symbols-outlined text-brand-dark text-lg">auto_stories</span>
 </div>
 <div>
-<span class="text-[11px] font-bold text-brand-muted uppercase tracking-wider block">Total Terindeks</span>
-<span class="text-xl font-display font-extrabold text-brand-dark">25.420 Naskah</span>
-</div>
+<span class="text-[10px] font-bold text-brand-muted uppercase tracking-wider block">Total Terindeks</span>
+<span class="text-base font-display font-extrabold text-brand-dark">{{ totalBooks > 0 ? numberFormat.format(totalBooks) : '…' }} Naskah</span>
 </div>
 </div>
 <!-- Search & Command Bar -->
-<div class="mt-8 pt-6 border-t-2 border-brand-dark/10">
-<form class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-<div class="relative flex-1">
-<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-brand-dark pointer-events-none">search</span>
-<input class="w-full neo-pill pl-12 pr-4 py-3 text-sm font-semibold bg-brand-cream border-2 border-brand-dark focus:ring-0 focus:border-brand-dark focus:bg-white text-brand-dark placeholder-brand-muted shadow-[2px_2px_0px_#1A1A1A] transition-all" id="catalog-search" placeholder="Cari judul naskah, nama penulis (cth. Pramoedya, Kartini), atau kata kunci..." type="text"/>
+<div class="mt-4 pt-4 border-t-2 border-brand-dark/10">
+<form class="space-y-2" @submit.prevent="submitSearch">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-brand-dark text-lg pointer-events-none">search</span>
+<input id="catalog-search" v-model="searchInput" class="w-full neo-pill pl-10 pr-3 py-2.5 text-xs font-semibold bg-brand-cream border-2 border-brand-dark focus:ring-0 focus:border-brand-dark focus:bg-white text-brand-dark placeholder-brand-muted shadow-[2px_2px_0px_#1A1A1A] transition-all" placeholder="Cari judul, penulis, atau kata kunci..." type="text"/>
 </div>
 <div class="flex items-center gap-2">
-<button class="neo-pill px-4 py-3 text-sm bg-white hover:bg-brand-lavender border-2 border-brand-dark text-brand-dark font-bold flex items-center gap-1.5 shadow-[2px_2px_0px_#1A1A1A]" id="toggle-filter-mobile" type="button">
-<span class="material-symbols-outlined text-lg">tune</span>
-<span class="hidden sm:inline">Opsi</span>
-</button>
-<button class="neo-pill px-6 py-3 text-sm bg-brand-yellow hover:bg-[#ebb035] border-2 border-brand-dark text-brand-dark font-bold shadow-[2px_2px_0px_#1A1A1A] flex items-center justify-center gap-2 shrink-0 cursor-pointer" type="submit">
+<button class="neo-pill w-full px-4 py-2.5 text-xs bg-brand-yellow hover:bg-[#ebb035] border-2 border-brand-dark text-brand-dark font-bold shadow-[2px_2px_0px_#1A1A1A] flex items-center justify-center gap-2 cursor-pointer" type="submit">
 <span>Cari Buku</span>
 <span class="material-symbols-outlined text-base">arrow_forward</span>
 </button>
@@ -59,68 +63,38 @@
 </form>
 </div>
 </div>
-</section>
-<!-- QUICK FILTER PILLS (CAROUSEL / WRAP) -->
-<section class="w-full mb-8">
-<div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none text-xs font-bold no-scrollbar">
-<button class="neo-pill px-4 py-2 bg-brand-dark text-white border-2 border-brand-dark shadow-[2px_2px_0px_#F4B942] whitespace-nowrap">
-        Semua (25.420)
-      </button>
-<button class="neo-pill px-4 py-2 bg-white hover:bg-brand-coral-light text-brand-dark border-2 border-brand-dark whitespace-nowrap shadow-sm">
-        Sastra &amp; Novel <span class="ml-1 text-[11px] opacity-75 font-normal">4.250</span>
-</button>
-<button class="neo-pill px-4 py-2 bg-white hover:bg-brand-yellow-light text-brand-dark border-2 border-brand-dark whitespace-nowrap shadow-sm">
-        Sejarah Nusantara <span class="ml-1 text-[11px] opacity-75 font-normal">3.120</span>
-</button>
-<button class="neo-pill px-4 py-2 bg-white hover:bg-brand-blue-light text-brand-dark border-2 border-brand-dark whitespace-nowrap shadow-sm">
-        Sains &amp; Teknologi <span class="ml-1 text-[11px] opacity-75 font-normal">2.890</span>
-</button>
-<button class="neo-pill px-4 py-2 bg-white hover:bg-brand-green-light text-brand-dark border-2 border-brand-dark whitespace-nowrap shadow-sm">
-        Filsafat &amp; Agama <span class="ml-1 text-[11px] opacity-75 font-normal">2.340</span>
-</button>
-<button class="neo-pill px-4 py-2 bg-white hover:bg-brand-peach text-brand-dark border-2 border-brand-dark whitespace-nowrap shadow-sm">
-        Komik &amp; Grafis <span class="ml-1 text-[11px] opacity-75 font-normal">920</span>
-</button>
-<button class="neo-pill px-4 py-2 bg-white hover:bg-brand-yellow-light text-brand-dark border-2 border-brand-dark whitespace-nowrap shadow-sm">
-        Anak &amp; Dongeng <span class="ml-1 text-[11px] opacity-75 font-normal">1.940</span>
-</button>
-<button class="neo-pill px-4 py-2 bg-white hover:bg-brand-lavender text-brand-dark border-2 border-brand-dark whitespace-nowrap shadow-sm">
-        Naskah Kuno &amp; Arsip <span class="ml-1 text-[11px] opacity-75 font-normal">810</span>
-</button>
 </div>
 </section>
-<!-- CURATED HERO MINI-BANNER (OnePlus Watch Card Style from Inspiration) -->
-<section class="w-full mb-8">
-<div class="neo-card p-5 sm:p-6 bg-gradient-to-r from-brand-peach via-white to-brand-green-light border-2 border-brand-dark shadow-solid flex flex-col md:flex-row items-center justify-between gap-5">
-<div class="flex items-center gap-4">
-<div class="w-12 h-12 rounded-2xl bg-brand-yellow border-2 border-brand-dark flex items-center justify-center shrink-0 shadow-sm">
-<span class="material-symbols-outlined text-2xl text-brand-dark">workspace_premium</span>
+<!-- CURATED HERO MINI-BANNER -->
+<section class="w-full">
+<div class="neo-card p-4 bg-gradient-to-r from-brand-peach via-white to-brand-green-light border-2 border-brand-dark shadow-solid space-y-3">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-brand-yellow border-2 border-brand-dark flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-xl text-brand-dark">workspace_premium</span>
 </div>
-<div>
-<span class="text-[11px] font-bold tracking-wider uppercase bg-brand-dark text-white px-2.5 py-0.5 rounded-full inline-block mb-1">Kurasi Pekan Ini</span>
-<h3 class="text-base sm:text-lg font-extrabold font-display text-brand-dark">
-            Menelusuri Jejak Perlawanan Sastra Pra-Kemerdekaan (8 Arsip Pilihan)
+<div class="min-w-0">
+<span class="text-[10px] font-bold tracking-wider uppercase bg-brand-dark text-white px-2.5 py-0.5 rounded-full inline-block mb-1">Panduan Kurasi</span>
+<h3 class="text-sm font-extrabold font-display text-brand-dark leading-snug">
+            Bagaimana kurator memverifikasi status lisensi?
           </h3>
-<p class="text-xs text-brand-muted font-semibold">Tersedia dalam format rekonstruksi digital high-resolution dan cetak ulang EPUB.</p>
+<p class="mt-1 text-[11px] text-brand-muted font-semibold leading-relaxed">Sumber naskah, tahun wafat penulis, dan status terjemahan diperiksa sebelum sebuah judul tayang.</p>
 </div>
 </div>
-<a class="neo-pill px-5 py-2.5 bg-brand-dark text-white hover:bg-brand-muted text-xs font-bold border-2 border-brand-dark shadow-sm shrink-0 flex items-center gap-2" href="#koleksi-khusus">
-<span>Buka Koleksi Kurasi</span>
+<RouterLink class="neo-pill w-full px-4 py-2 justify-center bg-brand-dark text-white hover:bg-brand-muted text-[11px] font-bold border-2 border-brand-dark shadow-sm flex items-center gap-2" to="/lisensi#domain-publik">
+<span>Baca Panduan Lisensi</span>
 <span class="material-symbols-outlined text-sm">arrow_forward</span>
-</a>
+</RouterLink>
 </div>
 </section>
-<!-- MAIN CATALOG AREA (2 COLS: SIDEBAR + GRID) -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-<!-- LEFT SIDEBAR: FILTERS -->
-<aside class="lg:col-span-3 neo-card p-5 bg-white border-2 border-brand-dark shadow-solid space-y-6 sticky top-24">
+<!-- FILTER -->
+<div class="neo-card p-5 bg-white border-2 border-brand-dark shadow-solid space-y-6">
 <!-- Filter Header -->
-<div class="flex items-center justify-between pb-3 border-b-2 border-brand-dark/10">
+<div class="flex items-center justify-between pb-3 border-b-2 border-brand-dark/10 gap-2">
 <div class="flex items-center gap-2">
 <span class="material-symbols-outlined text-brand-dark font-bold">tune</span>
 <h3 class="font-display font-extrabold text-base text-brand-dark">Filter Buku</h3>
 </div>
-<button class="text-xs font-bold text-brand-coral hover:underline cursor-pointer" type="button">
+<button class="text-xs font-bold text-brand-coral hover:underline cursor-pointer" type="button" @click="resetFilters">
           Reset Filter
         </button>
 </div>
@@ -128,47 +102,12 @@
 <div class="space-y-3">
 <span class="text-xs font-bold uppercase tracking-wider text-brand-dark block">Kategori Utama</span>
 <div class="space-y-2 text-xs font-semibold text-brand-dark">
-<label class="flex items-center justify-between cursor-pointer group">
+<label v-for="cat in categories" :key="cat.slug" class="flex items-center justify-between cursor-pointer group">
 <span class="flex items-center gap-2">
-<input checked="" class="w-4 h-4 rounded text-brand-green border-2 border-brand-dark focus:ring-0 cursor-pointer" type="checkbox"/>
-<span>Sastra Klasik</span>
+<input class="w-4 h-4 rounded text-brand-green border-2 border-brand-dark focus:ring-0 cursor-pointer" type="checkbox" :checked="filters.kategori.includes(cat.slug)" @change="toggleKategori(cat.slug)"/>
+<span>{{ cat.name }}</span>
 </span>
-<span class="px-2 py-0.5 rounded-full bg-brand-cream border border-brand-dark/20 text-[10px]">680</span>
-</label>
-<label class="flex items-center justify-between cursor-pointer group">
-<span class="flex items-center gap-2">
-<input class="w-4 h-4 rounded text-brand-green border-2 border-brand-dark focus:ring-0 cursor-pointer" type="checkbox"/>
-<span>Sejarah &amp; Biografi</span>
-</span>
-<span class="px-2 py-0.5 rounded-full bg-brand-cream border border-brand-dark/20 text-[10px]">420</span>
-</label>
-<label class="flex items-center justify-between cursor-pointer group">
-<span class="flex items-center gap-2">
-<input class="w-4 h-4 rounded text-brand-green border-2 border-brand-dark focus:ring-0 cursor-pointer" type="checkbox"/>
-<span>Sains &amp; Matematika</span>
-</span>
-<span class="px-2 py-0.5 rounded-full bg-brand-cream border border-brand-dark/20 text-[10px]">310</span>
-</label>
-<label class="flex items-center justify-between cursor-pointer group">
-<span class="flex items-center gap-2">
-<input class="w-4 h-4 rounded text-brand-green border-2 border-brand-dark focus:ring-0 cursor-pointer" type="checkbox"/>
-<span>Filsafat &amp; Pemikiran</span>
-</span>
-<span class="px-2 py-0.5 rounded-full bg-brand-cream border border-brand-dark/20 text-[10px]">195</span>
-</label>
-<label class="flex items-center justify-between cursor-pointer group">
-<span class="flex items-center gap-2">
-<input class="w-4 h-4 rounded text-brand-green border-2 border-brand-dark focus:ring-0 cursor-pointer" type="checkbox"/>
-<span>Cerita Rakyat &amp; Mitos</span>
-</span>
-<span class="px-2 py-0.5 rounded-full bg-brand-cream border border-brand-dark/20 text-[10px]">150</span>
-</label>
-<label class="flex items-center justify-between cursor-pointer group">
-<span class="flex items-center gap-2">
-<input class="w-4 h-4 rounded text-brand-green border-2 border-brand-dark focus:ring-0 cursor-pointer" type="checkbox"/>
-<span>Naskah Kuno Lontar</span>
-</span>
-<span class="px-2 py-0.5 rounded-full bg-brand-cream border border-brand-dark/20 text-[10px]">85</span>
+<span class="px-2 py-0.5 rounded-full bg-brand-cream border border-brand-dark/20 text-[10px]">{{ cat.books_count }}</span>
 </label>
 </div>
 </div>
@@ -177,127 +116,60 @@
 <span class="text-xs font-bold uppercase tracking-wider text-brand-dark block">Format Tersedia</span>
 <div class="grid grid-cols-2 gap-2 text-xs font-bold">
 <label class="neo-card-sm p-2 bg-brand-cream hover:bg-brand-coral-light border border-brand-dark flex items-center gap-1.5 cursor-pointer">
-<input checked="" class="w-3.5 h-3.5 rounded text-brand-dark border-brand-dark focus:ring-0" type="checkbox"/>
+<input class="w-3.5 h-3.5 rounded text-brand-dark border-brand-dark focus:ring-0" type="checkbox" :checked="filters.format.includes('epub')" @change="toggleFormat('epub')"/>
 <span>EPUB</span>
 </label>
 <label class="neo-card-sm p-2 bg-brand-cream hover:bg-brand-yellow-light border border-brand-dark flex items-center gap-1.5 cursor-pointer">
-<input checked="" class="w-3.5 h-3.5 rounded text-brand-dark border-brand-dark focus:ring-0" type="checkbox"/>
+<input class="w-3.5 h-3.5 rounded text-brand-dark border-brand-dark focus:ring-0" type="checkbox" :checked="filters.format.includes('pdf')" @change="toggleFormat('pdf')"/>
 <span>PDF Asli</span>
 </label>
 <label class="neo-card-sm p-2 bg-brand-cream hover:bg-brand-blue-light border border-brand-dark flex items-center gap-1.5 cursor-pointer">
-<input class="w-3.5 h-3.5 rounded text-brand-dark border-brand-dark focus:ring-0" type="checkbox"/>
+<input class="w-3.5 h-3.5 rounded text-brand-dark border-brand-dark focus:ring-0" type="checkbox" :checked="filters.format.includes('txt')" @change="toggleFormat('txt')"/>
 <span>Teks TXT</span>
 </label>
 <label class="neo-card-sm p-2 bg-brand-cream hover:bg-brand-green-light border border-brand-dark flex items-center gap-1.5 cursor-pointer">
-<input class="w-3.5 h-3.5 rounded text-brand-dark border-brand-dark focus:ring-0" type="checkbox"/>
+<input class="w-3.5 h-3.5 rounded text-brand-dark border-brand-dark focus:ring-0" type="checkbox" :checked="filters.format.includes('audio')" @change="toggleFormat('audio')"/>
 <span>Buku Suara</span>
-</label>
-</div>
-</div>
-<!-- Periode / Era Sastra -->
-<div class="space-y-2 pt-3 border-t-2 border-brand-dark/10">
-<span class="text-xs font-bold uppercase tracking-wider text-brand-dark block">Era Kepenulisan</span>
-<div class="space-y-1.5 text-xs font-semibold text-brand-dark">
-<label class="flex items-center gap-2 cursor-pointer">
-<input class="text-brand-yellow border-2 border-brand-dark focus:ring-0" name="era" type="radio"/>
-<span>Semua Era</span>
-</label>
-<label class="flex items-center gap-2 cursor-pointer">
-<input checked="" class="text-brand-yellow border-2 border-brand-dark focus:ring-0" name="era" type="radio"/>
-<span>Balai Pustaka (1920–1942)</span>
-</label>
-<label class="flex items-center gap-2 cursor-pointer">
-<input class="text-brand-yellow border-2 border-brand-dark focus:ring-0" name="era" type="radio"/>
-<span>Pujangga Baru (1933–1942)</span>
-</label>
-<label class="flex items-center gap-2 cursor-pointer">
-<input class="text-brand-yellow border-2 border-brand-dark focus:ring-0" name="era" type="radio"/>
-<span>Angkatan '45 (1945–1953)</span>
-</label>
-<label class="flex items-center gap-2 cursor-pointer">
-<input class="text-brand-yellow border-2 border-brand-dark focus:ring-0" name="era" type="radio"/>
-<span>Kontemporer Terbuka</span>
-</label>
-</div>
-</div>
-<!-- Target Panjang Halaman (Inspiration: Health Progress Bar style) -->
-<div class="space-y-3 pt-3 border-t-2 border-brand-dark/10">
-<div class="flex items-center justify-between">
-<span class="text-xs font-bold uppercase tracking-wider text-brand-dark">Ketebalan Buku</span>
-<span class="text-[11px] font-bold text-brand-green">100 - 350 Hal</span>
-</div>
-<div class="w-full bg-brand-cream h-4 rounded-full border-2 border-brand-dark p-0.5 relative flex items-center overflow-hidden">
-<div class="h-full bg-brand-coral rounded-full w-[65%] transition-all"></div>
-</div>
-<div class="flex justify-between text-[10px] font-bold text-brand-muted">
-<span>&lt; 100 Hal</span>
-<span>100–300 Hal</span>
-<span>&gt; 500 Hal</span>
-</div>
-</div>
-<!-- Status Hak Cipta -->
-<div class="space-y-2 pt-3 border-t-2 border-brand-dark/10">
-<span class="text-xs font-bold uppercase tracking-wider text-brand-dark block">Lisensi Naskah</span>
-<div class="space-y-1.5 text-xs font-semibold">
-<label class="flex items-center gap-2 cursor-pointer">
-<input checked="" class="w-4 h-4 rounded text-brand-blue border-2 border-brand-dark focus:ring-0" type="checkbox"/>
-<span>Domain Publik (Bebas)</span>
-</label>
-<label class="flex items-center gap-2 cursor-pointer">
-<input class="w-4 h-4 rounded text-brand-blue border-2 border-brand-dark focus:ring-0" type="checkbox"/>
-<span>Creative Commons (CC-BY)</span>
 </label>
 </div>
 </div>
 <!-- Rating Minimum -->
 <div class="pt-3 border-t-2 border-brand-dark/10">
-<span class="text-xs font-bold uppercase tracking-wider text-brand-dark block mb-2">Rating Pembaca</span>
+<span class="text-xs font-bold uppercase tracking-wider text-brand-dark block mb-2">Nilai Kurasi Minimum</span>
 <div class="flex gap-1.5">
-<button class="neo-pill flex-1 py-1.5 text-xs bg-brand-yellow font-bold border-2 border-brand-dark" type="button">★ 4.5+</button>
-<button class="neo-pill flex-1 py-1.5 text-xs bg-brand-cream hover:bg-white font-bold border-2 border-brand-dark" type="button">★ 4.0+</button>
-<button class="neo-pill flex-1 py-1.5 text-xs bg-brand-cream hover:bg-white font-bold border-2 border-brand-dark" type="button">Semua</button>
+<button v-for="option in ratingOptions" :key="option.value" class="neo-pill flex-1 py-1.5 text-xs font-bold border-2 border-brand-dark" :class="filters.min_rating === option.value ? 'bg-brand-yellow' : 'bg-brand-cream hover:bg-white'" type="button" @click="setMinRating(option.value)">
+                {{ option.label }}
+              </button>
 </div>
 </div>
-</aside>
-<!-- RIGHT: MAIN CATALOG & GRID -->
-<div class="lg:col-span-9 space-y-6">
-<!-- TOOLBAR: STATUS, ACTIVE TAGS, SORT, VIEW SWITCHER -->
-<div class="neo-card p-4 bg-white border-2 border-brand-dark shadow-solid flex flex-col md:flex-row md:items-center justify-between gap-4">
-<div class="space-y-1.5">
-<div class="flex items-center gap-2">
-<span class="w-2.5 h-2.5 rounded-full bg-brand-green border border-brand-dark"></span>
-<span class="text-xs sm:text-sm font-extrabold text-brand-dark">
-              Menampilkan <span class="underline decoration-brand-yellow decoration-2">1–12</span> dari 1.420 Buku Terverifikasi
+</div>
+<!-- STATUS TOOLBAR -->
+<div class="neo-card p-4 bg-white border-2 border-brand-dark shadow-solid space-y-3">
+<div class="flex items-start gap-2">
+<span class="mt-1 w-2.5 h-2.5 rounded-full bg-brand-green border border-brand-dark shrink-0"></span>
+<span class="text-xs font-extrabold text-brand-dark leading-relaxed">
+              <template v-if="rangeLabel">Menampilkan <span class="underline decoration-brand-yellow decoration-2">{{ rangeLabel }}</span> dari {{ numberFormat.format(meta.total) }} Buku Terverifikasi</template>
+              <template v-else>Tidak ada buku yang cocok dengan filter saat ini</template>
             </span>
 </div>
 <!-- Active Tags -->
-<div class="flex flex-wrap items-center gap-1.5">
-<span class="neo-pill px-2.5 py-0.5 text-[11px] bg-brand-coral-light border border-brand-dark text-brand-dark font-bold flex items-center gap-1">
-              Sastra Klasik
-              <button class="hover:text-brand-coral text-xs" title="Hapus filter">✕</button>
-</span>
-<span class="neo-pill px-2.5 py-0.5 text-[11px] bg-brand-yellow-light border border-brand-dark text-brand-dark font-bold flex items-center gap-1">
-              Format EPUB
-              <button class="hover:text-brand-coral text-xs" title="Hapus filter">✕</button>
-</span>
-<span class="neo-pill px-2.5 py-0.5 text-[11px] bg-brand-green-light border border-brand-dark text-brand-dark font-bold flex items-center gap-1">
-              Domain Publik
-              <button class="hover:text-brand-coral text-xs" title="Hapus filter">✕</button>
+<div v-if="activeTags.length" class="flex flex-wrap items-center gap-1.5">
+<span v-for="tag in activeTags" :key="tag.key" class="neo-pill px-2.5 py-0.5 text-[11px] border border-brand-dark text-brand-dark font-bold flex items-center gap-1" :class="tag.classes">
+              {{ tag.label }}
+              <button class="hover:text-brand-coral text-xs" title="Hapus filter" type="button" @click="tag.remove">✕</button>
 </span>
 </div>
-</div>
-<!-- Controls: Sort & Grid/List view -->
-<div class="flex items-center gap-3 shrink-0 self-end md:self-auto">
-<div class="flex items-center gap-1.5 text-xs font-bold">
-<span class="text-brand-muted hidden sm:inline">Urutkan:</span>
-<select class="neo-pill text-xs font-bold py-1.5 px-3 bg-brand-cream border-2 border-brand-dark focus:ring-0 focus:border-brand-dark cursor-pointer shadow-sm">
-<option>Paling Populer</option>
-<option>Terbaru Diunggah</option>
-<option>Rating Tertinggi</option>
-<option>Abjad Judul (A–Z)</option>
-<option>Tahun Terbit (Terlama)</option>
+<div class="pt-3 border-t-2 border-brand-dark/10 space-y-1.5">
+<label class="text-[10px] font-bold uppercase tracking-wider text-brand-muted block" for="catalog-sort">Urutkan</label>
+<select id="catalog-sort" class="w-full neo-pill text-xs font-bold py-2 px-3 bg-brand-cream border-2 border-brand-dark focus:ring-0 focus:border-brand-dark cursor-pointer shadow-sm" :value="filters.sort" @change="onSortChange">
+<option value="">Paling Populer</option>
+<option value="terbaru">Terbaru Diunggah</option>
+<option value="rating">Rating Tertinggi</option>
+<option value="judul">Abjad Judul (A–Z)</option>
+<option value="tahun">Tahun Terbit (Terlama)</option>
 </select>
-</div>
+<div class="flex items-center justify-between gap-2 pt-1">
+<span class="text-[10px] font-bold uppercase tracking-wider text-brand-muted">Tampilan</span>
 <div class="flex items-center bg-brand-cream p-1 rounded-full border-2 border-brand-dark shadow-sm">
 <button class="w-7 h-7 rounded-full bg-brand-yellow border-2 border-brand-dark flex items-center justify-center text-brand-dark shadow-xs" title="Tampilan Grid">
 <span class="material-symbols-outlined text-base">grid_view</span>
@@ -308,540 +180,62 @@
 </div>
 </div>
 </div>
-<!-- BOOK CARDS GRID (12 BOOKS) -->
-<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-<!-- 1. Bumi Manusia -->
-<article class="neo-card p-4 bg-white border-2 border-brand-dark shadow-solid flex flex-col justify-between group hover:-translate-y-1 transition-all">
-<div>
-<!-- Book Cover Art Container -->
-<div class="relative w-full h-48 rounded-2xl border-2 border-brand-dark bg-brand-peach overflow-hidden flex items-center justify-center mb-4 p-4">
-<div class="absolute top-2 left-2 flex gap-1 z-10">
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-brand-yellow text-brand-dark font-extrabold border border-brand-dark">Klasik</span>
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-white text-brand-dark font-bold border border-brand-dark">EPUB • PDF</span>
 </div>
-<button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white border border-brand-dark flex items-center justify-center hover:bg-brand-coral-light transition-colors z-10" title="Simpan ke Rak">
-<span class="material-symbols-outlined text-sm">bookmark_border</span>
-</button>
-<!-- Book Spine Simulation -->
-<div class="w-28 h-40 bg-white border-2 border-brand-dark rounded-r-lg shadow-md p-2 flex flex-col justify-between transform group-hover:rotate-1 transition-transform">
-<div class="border-b border-brand-dark/20 pb-1">
-<span class="text-[8px] font-bold text-brand-coral block uppercase">Tetralogi Buru #1</span>
-<h4 class="font-display font-extrabold text-xs text-brand-dark leading-tight mt-0.5">Bumi Manusia</h4>
-</div>
-<div class="text-[8px] font-bold text-brand-muted">Pramoedya A. T.</div>
-</div>
-</div>
-<!-- Meta info -->
-<div class="space-y-1 mb-3">
-<div class="flex items-center justify-between text-xs font-bold">
-<span class="text-brand-coral font-bold">Pramoedya Ananta Toer</span>
-<span class="flex items-center gap-1 text-brand-dark bg-brand-yellow/40 px-2 py-0.5 rounded-full border border-brand-dark/20">
-<span class="text-xs">★</span> 4.9
-                </span>
-</div>
-<h3 class="font-display font-extrabold text-lg text-brand-dark group-hover:text-brand-green transition-colors">
-                Bumi Manusia
-              </h3>
-<p class="text-xs text-brand-muted font-medium line-clamp-2">
-                Kisah perjuangan Minke di tengah pergolakan sosial kolonial Hindia Belanda awal abad ke-20.
-              </p>
-</div>
-</div>
-<!-- Footer details & Action -->
-<div class="pt-3 border-t-2 border-brand-dark/10 flex items-center justify-between gap-2 mt-auto">
-<span class="text-[11px] font-bold text-brand-muted">535 Halaman</span>
-<div class="flex gap-1.5">
-<RouterLink class="neo-pill px-3 py-1.5 text-xs bg-brand-yellow hover:bg-[#ebb035] text-brand-dark font-bold border-2 border-brand-dark shadow-xs flex items-center gap-1" to="/buku/bumi-manusia">
-<span>Baca</span>
-<span class="material-symbols-outlined text-sm">open_in_new</span>
-</RouterLink>
-</div>
-</div>
-</article>
-<!-- 2. Tenggelamnya Kapal Van der Wijck -->
-<article class="neo-card p-4 bg-white border-2 border-brand-dark shadow-solid flex flex-col justify-between group hover:-translate-y-1 transition-all">
-<div>
-<div class="relative w-full h-48 rounded-2xl border-2 border-brand-dark bg-brand-blue-light overflow-hidden flex items-center justify-center mb-4 p-4">
-<div class="absolute top-2 left-2 flex gap-1 z-10">
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-brand-blue text-brand-dark font-extrabold border border-brand-dark">Roman</span>
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-white text-brand-dark font-bold border border-brand-dark">EPUB</span>
-</div>
-<button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white border border-brand-dark flex items-center justify-center hover:bg-brand-coral-light transition-colors z-10" title="Simpan ke Rak">
-<span class="material-symbols-outlined text-sm">bookmark_border</span>
-</button>
-<div class="w-28 h-40 bg-white border-2 border-brand-dark rounded-r-lg shadow-md p-2 flex flex-col justify-between transform group-hover:rotate-1 transition-transform">
-<div class="border-b border-brand-dark/20 pb-1">
-<span class="text-[8px] font-bold text-brand-blue block uppercase">Balai Pustaka</span>
-<h4 class="font-display font-extrabold text-[11px] text-brand-dark leading-tight mt-0.5">Kapal Van der Wijck</h4>
-</div>
-<div class="text-[8px] font-bold text-brand-muted">Buya Hamka</div>
-</div>
-</div>
-<div class="space-y-1 mb-3">
-<div class="flex items-center justify-between text-xs font-bold">
-<span class="text-brand-blue font-bold">Hamka (Prof. Dr.)</span>
-<span class="flex items-center gap-1 text-brand-dark bg-brand-yellow/40 px-2 py-0.5 rounded-full border border-brand-dark/20">
-<span class="text-xs">★</span> 4.8
-                </span>
-</div>
-<h3 class="font-display font-extrabold text-lg text-brand-dark group-hover:text-brand-green transition-colors">
-                Tenggelamnya Kapal Van der Wijck
-              </h3>
-<p class="text-xs text-brand-muted font-medium line-clamp-2">
-                Tragedi asmara Zainuddin dan Hayati yang terhadang benteng adat Minangkabau yang kaku.
-              </p>
-</div>
-</div>
-<div class="pt-3 border-t-2 border-brand-dark/10 flex items-center justify-between gap-2 mt-auto">
-<span class="text-[11px] font-bold text-brand-muted">340 Halaman</span>
-<a class="neo-pill px-3 py-1.5 text-xs bg-brand-yellow hover:bg-[#ebb035] text-brand-dark font-bold border-2 border-brand-dark shadow-xs flex items-center gap-1" href="#">
-<span>Baca</span>
-<span class="material-symbols-outlined text-sm">open_in_new</span>
-</a>
-</div>
-</article>
-<!-- 3. Madilog -->
-<article class="neo-card p-4 bg-white border-2 border-brand-dark shadow-solid flex flex-col justify-between group hover:-translate-y-1 transition-all">
-<div>
-<div class="relative w-full h-48 rounded-2xl border-2 border-brand-dark bg-brand-yellow-light overflow-hidden flex items-center justify-center mb-4 p-4">
-<div class="absolute top-2 left-2 flex gap-1 z-10">
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-brand-coral text-white font-extrabold border border-brand-dark">Filsafat</span>
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-white text-brand-dark font-bold border border-brand-dark">PDF</span>
-</div>
-<button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white border border-brand-dark flex items-center justify-center hover:bg-brand-coral-light transition-colors z-10" title="Simpan ke Rak">
-<span class="material-symbols-outlined text-sm">bookmark_border</span>
-</button>
-<div class="w-28 h-40 bg-white border-2 border-brand-dark rounded-r-lg shadow-md p-2 flex flex-col justify-between transform group-hover:-rotate-1 transition-transform">
-<div class="border-b border-brand-dark/20 pb-1">
-<span class="text-[8px] font-bold text-brand-coral block uppercase">Masterpiece 1943</span>
-<h4 class="font-display font-extrabold text-xs text-brand-dark leading-tight mt-0.5">MADILOG</h4>
-</div>
-<div class="text-[8px] font-bold text-brand-muted">Tan Malaka</div>
-</div>
-</div>
-<div class="space-y-1 mb-3">
-<div class="flex items-center justify-between text-xs font-bold">
-<span class="text-brand-coral font-bold">Tan Malaka</span>
-<span class="flex items-center gap-1 text-brand-dark bg-brand-yellow/40 px-2 py-0.5 rounded-full border border-brand-dark/20">
-<span class="text-xs">★</span> 4.7
-                </span>
-</div>
-<h3 class="font-display font-extrabold text-lg text-brand-dark group-hover:text-brand-green transition-colors">
-                Madilog
-              </h3>
-<p class="text-xs text-brand-muted font-medium line-clamp-2">
-                Materialisme, Dialektika, dan Logika: Sintesis pemikiran pembebasan akal sehat nusantara.
-              </p>
-</div>
-</div>
-<div class="pt-3 border-t-2 border-brand-dark/10 flex items-center justify-between gap-2 mt-auto">
-<span class="text-[11px] font-bold text-brand-muted">460 Halaman</span>
-<a class="neo-pill px-3 py-1.5 text-xs bg-brand-yellow hover:bg-[#ebb035] text-brand-dark font-bold border-2 border-brand-dark shadow-xs flex items-center gap-1" href="#">
-<span>Baca</span>
-<span class="material-symbols-outlined text-sm">open_in_new</span>
-</a>
-</div>
-</article>
-<!-- 4. Salah Asuhan -->
-<article class="neo-card p-4 bg-white border-2 border-brand-dark shadow-solid flex flex-col justify-between group hover:-translate-y-1 transition-all">
-<div>
-<div class="relative w-full h-48 rounded-2xl border-2 border-brand-dark bg-brand-green-light overflow-hidden flex items-center justify-center mb-4 p-4">
-<div class="absolute top-2 left-2 flex gap-1 z-10">
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-brand-green text-white font-extrabold border border-brand-dark">BP 1928</span>
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-white text-brand-dark font-bold border border-brand-dark">EPUB</span>
-</div>
-<button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white border border-brand-dark flex items-center justify-center hover:bg-brand-coral-light transition-colors z-10" title="Simpan ke Rak">
-<span class="material-symbols-outlined text-sm">bookmark_border</span>
-</button>
-<div class="w-28 h-40 bg-white border-2 border-brand-dark rounded-r-lg shadow-md p-2 flex flex-col justify-between transform group-hover:rotate-1 transition-transform">
-<div class="border-b border-brand-dark/20 pb-1">
-<span class="text-[8px] font-bold text-brand-green block uppercase">Seri Klasik</span>
-<h4 class="font-display font-extrabold text-xs text-brand-dark leading-tight mt-0.5">Salah Asuhan</h4>
-</div>
-<div class="text-[8px] font-bold text-brand-muted">Abdul Muis</div>
-</div>
-</div>
-<div class="space-y-1 mb-3">
-<div class="flex items-center justify-between text-xs font-bold">
-<span class="text-brand-green font-bold">Abdul Muis</span>
-<span class="flex items-center gap-1 text-brand-dark bg-brand-yellow/40 px-2 py-0.5 rounded-full border border-brand-dark/20">
-<span class="text-xs">★</span> 4.6
-                </span>
-</div>
-<h3 class="font-display font-extrabold text-lg text-brand-dark group-hover:text-brand-green transition-colors">
-                Salah Asuhan
-              </h3>
-<p class="text-xs text-brand-muted font-medium line-clamp-2">
-                Konflik psikologis dan identitas Hanafi akibat keterasingan budaya timur dan barat.
-              </p>
-</div>
-</div>
-<div class="pt-3 border-t-2 border-brand-dark/10 flex items-center justify-between gap-2 mt-auto">
-<span class="text-[11px] font-bold text-brand-muted">280 Halaman</span>
-<a class="neo-pill px-3 py-1.5 text-xs bg-brand-yellow hover:bg-[#ebb035] text-brand-dark font-bold border-2 border-brand-dark shadow-xs flex items-center gap-1" href="#">
-<span>Baca</span>
-<span class="material-symbols-outlined text-sm">open_in_new</span>
-</a>
-</div>
-</article>
-<!-- 5. Layar Terkembang -->
-<article class="neo-card p-4 bg-white border-2 border-brand-dark shadow-solid flex flex-col justify-between group hover:-translate-y-1 transition-all">
-<div>
-<div class="relative w-full h-48 rounded-2xl border-2 border-brand-dark bg-brand-lavender overflow-hidden flex items-center justify-center mb-4 p-4">
-<div class="absolute top-2 left-2 flex gap-1 z-10">
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-brand-dark text-white font-extrabold border border-brand-dark">Pujangga Baru</span>
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-white text-brand-dark font-bold border border-brand-dark">EPUB</span>
-</div>
-<button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white border border-brand-dark flex items-center justify-center hover:bg-brand-coral-light transition-colors z-10" title="Simpan ke Rak">
-<span class="material-symbols-outlined text-sm">bookmark_border</span>
-</button>
-<div class="w-28 h-40 bg-white border-2 border-brand-dark rounded-r-lg shadow-md p-2 flex flex-col justify-between transform group-hover:-rotate-1 transition-transform">
-<div class="border-b border-brand-dark/20 pb-1">
-<span class="text-[8px] font-bold text-brand-dark block uppercase">Pelopor Modern</span>
-<h4 class="font-display font-extrabold text-[11px] text-brand-dark leading-tight mt-0.5">Layar Terkembang</h4>
-</div>
-<div class="text-[8px] font-bold text-brand-muted">Sutan Takdir A.</div>
-</div>
-</div>
-<div class="space-y-1 mb-3">
-<div class="flex items-center justify-between text-xs font-bold">
-<span class="text-brand-dark font-bold">S. Takdir Alisjahbana</span>
-<span class="flex items-center gap-1 text-brand-dark bg-brand-yellow/40 px-2 py-0.5 rounded-full border border-brand-dark/20">
-<span class="text-xs">★</span> 4.5
-                </span>
-</div>
-<h3 class="font-display font-extrabold text-lg text-brand-dark group-hover:text-brand-green transition-colors">
-                Layar Terkembang
-              </h3>
-<p class="text-xs text-brand-muted font-medium line-clamp-2">
-                Kemajuan emansipasi perempuan dan pergolakan cita-cita pembaharuan bangsa muda.
-              </p>
-</div>
-</div>
-<div class="pt-3 border-t-2 border-brand-dark/10 flex items-center justify-between gap-2 mt-auto">
-<span class="text-[11px] font-bold text-brand-muted">210 Halaman</span>
-<a class="neo-pill px-3 py-1.5 text-xs bg-brand-yellow hover:bg-[#ebb035] text-brand-dark font-bold border-2 border-brand-dark shadow-xs flex items-center gap-1" href="#">
-<span>Baca</span>
-<span class="material-symbols-outlined text-sm">open_in_new</span>
-</a>
-</div>
-</article>
-<!-- 6. Habis Gelap Terbitlah Terang -->
-<article class="neo-card p-4 bg-white border-2 border-brand-dark shadow-solid flex flex-col justify-between group hover:-translate-y-1 transition-all">
-<div>
-<div class="relative w-full h-48 rounded-2xl border-2 border-brand-dark bg-brand-coral-light overflow-hidden flex items-center justify-center mb-4 p-4">
-<div class="absolute top-2 left-2 flex gap-1 z-10">
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-brand-coral text-white font-extrabold border border-brand-dark">Surat &amp; Sejarah</span>
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-white text-brand-dark font-bold border border-brand-dark">EPUB • PDF</span>
-</div>
-<button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white border border-brand-dark flex items-center justify-center hover:bg-brand-coral-light transition-colors z-10" title="Simpan ke Rak">
-<span class="material-symbols-outlined text-sm">bookmark_border</span>
-</button>
-<div class="w-28 h-40 bg-white border-2 border-brand-dark rounded-r-lg shadow-md p-2 flex flex-col justify-between transform group-hover:rotate-1 transition-transform">
-<div class="border-b border-brand-dark/20 pb-1">
-<span class="text-[8px] font-bold text-brand-coral block uppercase">Dokumen Bangsa</span>
-<h4 class="font-display font-extrabold text-[10px] text-brand-dark leading-tight mt-0.5">Habis Gelap Terbitlah Terang</h4>
-</div>
-<div class="text-[8px] font-bold text-brand-muted">R.A. Kartini</div>
-</div>
-</div>
-<div class="space-y-1 mb-3">
-<div class="flex items-center justify-between text-xs font-bold">
-<span class="text-brand-coral font-bold">R.A. Kartini</span>
-<span class="flex items-center gap-1 text-brand-dark bg-brand-yellow/40 px-2 py-0.5 rounded-full border border-brand-dark/20">
-<span class="text-xs">★</span> 4.9
-                </span>
-</div>
-<h3 class="font-display font-extrabold text-lg text-brand-dark group-hover:text-brand-green transition-colors">
-                Habis Gelap Terbitlah Terang
-              </h3>
-<p class="text-xs text-brand-muted font-medium line-clamp-2">
-                Himpunan surat-surat visioner Kartini kepada sahabat penanya mengenai hak pendidikan wanita.
-              </p>
-</div>
-</div>
-<div class="pt-3 border-t-2 border-brand-dark/10 flex items-center justify-between gap-2 mt-auto">
-<span class="text-[11px] font-bold text-brand-muted">320 Halaman</span>
-<a class="neo-pill px-3 py-1.5 text-xs bg-brand-yellow hover:bg-[#ebb035] text-brand-dark font-bold border-2 border-brand-dark shadow-xs flex items-center gap-1" href="#">
-<span>Baca</span>
-<span class="material-symbols-outlined text-sm">open_in_new</span>
-</a>
-</div>
-</article>
-<!-- 7. Atheis -->
-<article class="neo-card p-4 bg-white border-2 border-brand-dark shadow-solid flex flex-col justify-between group hover:-translate-y-1 transition-all">
-<div>
-<div class="relative w-full h-48 rounded-2xl border-2 border-brand-dark bg-brand-peach overflow-hidden flex items-center justify-center mb-4 p-4">
-<div class="absolute top-2 left-2 flex gap-1 z-10">
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-brand-green text-white font-extrabold border border-brand-dark">Sastra 1949</span>
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-white text-brand-dark font-bold border border-brand-dark">EPUB</span>
-</div>
-<button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white border border-brand-dark flex items-center justify-center hover:bg-brand-coral-light transition-colors z-10" title="Simpan ke Rak">
-<span class="material-symbols-outlined text-sm">bookmark_border</span>
-</button>
-<div class="w-28 h-40 bg-white border-2 border-brand-dark rounded-r-lg shadow-md p-2 flex flex-col justify-between transform group-hover:rotate-1 transition-transform">
-<div class="border-b border-brand-dark/20 pb-1">
-<span class="text-[8px] font-bold text-brand-green block uppercase">Psikologis</span>
-<h4 class="font-display font-extrabold text-xs text-brand-dark leading-tight mt-0.5">Atheis</h4>
-</div>
-<div class="text-[8px] font-bold text-brand-muted">Achdiat K. M.</div>
-</div>
-</div>
-<div class="space-y-1 mb-3">
-<div class="flex items-center justify-between text-xs font-bold">
-<span class="text-brand-green font-bold">Achdiat K. Mihardja</span>
-<span class="flex items-center gap-1 text-brand-dark bg-brand-yellow/40 px-2 py-0.5 rounded-full border border-brand-dark/20">
-<span class="text-xs">★</span> 4.7
-                </span>
-</div>
-<h3 class="font-display font-extrabold text-lg text-brand-dark group-hover:text-brand-green transition-colors">
-                Atheis
-              </h3>
-<p class="text-xs text-brand-muted font-medium line-clamp-2">
-                Dilema Hasan yang taat menghadapi arus modernisme, marxisme, dan nihilisme di Bandung.
-              </p>
-</div>
-</div>
-<div class="pt-3 border-t-2 border-brand-dark/10 flex items-center justify-between gap-2 mt-auto">
-<span class="text-[11px] font-bold text-brand-muted">240 Halaman</span>
-<a class="neo-pill px-3 py-1.5 text-xs bg-brand-yellow hover:bg-[#ebb035] text-brand-dark font-bold border-2 border-brand-dark shadow-xs flex items-center gap-1" href="#">
-<span>Baca</span>
-<span class="material-symbols-outlined text-sm">open_in_new</span>
-</a>
-</div>
-</article>
-<!-- 8. Siti Nurbaya -->
-<article class="neo-card p-4 bg-white border-2 border-brand-dark shadow-solid flex flex-col justify-between group hover:-translate-y-1 transition-all">
-<div>
-<div class="relative w-full h-48 rounded-2xl border-2 border-brand-dark bg-brand-yellow-light overflow-hidden flex items-center justify-center mb-4 p-4">
-<div class="absolute top-2 left-2 flex gap-1 z-10">
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-brand-yellow text-brand-dark font-extrabold border border-brand-dark">Koleksi Abadi</span>
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-white text-brand-dark font-bold border border-brand-dark">EPUB</span>
-</div>
-<button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white border border-brand-dark flex items-center justify-center hover:bg-brand-coral-light transition-colors z-10" title="Simpan ke Rak">
-<span class="material-symbols-outlined text-sm">bookmark_border</span>
-</button>
-<div class="w-28 h-40 bg-white border-2 border-brand-dark rounded-r-lg shadow-md p-2 flex flex-col justify-between transform group-hover:-rotate-1 transition-transform">
-<div class="border-b border-brand-dark/20 pb-1">
-<span class="text-[8px] font-bold text-brand-dark block uppercase">Kasih Tak Sampai</span>
-<h4 class="font-display font-extrabold text-xs text-brand-dark leading-tight mt-0.5">Siti Nurbaya</h4>
-</div>
-<div class="text-[8px] font-bold text-brand-muted">Marah Roesli</div>
-</div>
-</div>
-<div class="space-y-1 mb-3">
-<div class="flex items-center justify-between text-xs font-bold">
-<span class="text-brand-dark font-bold">Marah Roesli</span>
-<span class="flex items-center gap-1 text-brand-dark bg-brand-yellow/40 px-2 py-0.5 rounded-full border border-brand-dark/20">
-<span class="text-xs">★</span> 4.6
-                </span>
-</div>
-<h3 class="font-display font-extrabold text-lg text-brand-dark group-hover:text-brand-green transition-colors">
-                Siti Nurbaya
-              </h3>
-<p class="text-xs text-brand-muted font-medium line-clamp-2">
-                Tragedi cinta Samsulbahri dan Siti Nurbaya serta cengkeraman rentenir Datuk Meringgih.
-              </p>
-</div>
-</div>
-<div class="pt-3 border-t-2 border-brand-dark/10 flex items-center justify-between gap-2 mt-auto">
-<span class="text-[11px] font-bold text-brand-muted">310 Halaman</span>
-<a class="neo-pill px-3 py-1.5 text-xs bg-brand-yellow hover:bg-[#ebb035] text-brand-dark font-bold border-2 border-brand-dark shadow-xs flex items-center gap-1" href="#">
-<span>Baca</span>
-<span class="material-symbols-outlined text-sm">open_in_new</span>
-</a>
-</div>
-</article>
-<!-- 9. Robohnya Surau Kami -->
-<article class="neo-card p-4 bg-white border-2 border-brand-dark shadow-solid flex flex-col justify-between group hover:-translate-y-1 transition-all">
-<div>
-<div class="relative w-full h-48 rounded-2xl border-2 border-brand-dark bg-brand-blue-light overflow-hidden flex items-center justify-center mb-4 p-4">
-<div class="absolute top-2 left-2 flex gap-1 z-10">
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-brand-blue text-brand-dark font-extrabold border border-brand-dark">Cerpen Klasik</span>
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-white text-brand-dark font-bold border border-brand-dark">EPUB</span>
-</div>
-<button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white border border-brand-dark flex items-center justify-center hover:bg-brand-coral-light transition-colors z-10" title="Simpan ke Rak">
-<span class="material-symbols-outlined text-sm">bookmark_border</span>
-</button>
-<div class="w-28 h-40 bg-white border-2 border-brand-dark rounded-r-lg shadow-md p-2 flex flex-col justify-between transform group-hover:rotate-1 transition-transform">
-<div class="border-b border-brand-dark/20 pb-1">
-<span class="text-[8px] font-bold text-brand-blue block uppercase">Antologi Satir</span>
-<h4 class="font-display font-extrabold text-[11px] text-brand-dark leading-tight mt-0.5">Robohnya Surau Kami</h4>
-</div>
-<div class="text-[8px] font-bold text-brand-muted">A.A. Navis</div>
-</div>
-</div>
-<div class="space-y-1 mb-3">
-<div class="flex items-center justify-between text-xs font-bold">
-<span class="text-brand-blue font-bold">A.A. Navis</span>
-<span class="flex items-center gap-1 text-brand-dark bg-brand-yellow/40 px-2 py-0.5 rounded-full border border-brand-dark/20">
-<span class="text-xs">★</span> 4.8
-                </span>
-</div>
-<h3 class="font-display font-extrabold text-lg text-brand-dark group-hover:text-brand-green transition-colors">
-                Robohnya Surau Kami
-              </h3>
-<p class="text-xs text-brand-muted font-medium line-clamp-2">
-                Kritik tajam nan jenaka terhadap kesalehan ritual yang melupakan tanggung jawab duniawi.
-              </p>
-</div>
-</div>
-<div class="pt-3 border-t-2 border-brand-dark/10 flex items-center justify-between gap-2 mt-auto">
-<span class="text-[11px] font-bold text-brand-muted">160 Halaman</span>
-<a class="neo-pill px-3 py-1.5 text-xs bg-brand-yellow hover:bg-[#ebb035] text-brand-dark font-bold border-2 border-brand-dark shadow-xs flex items-center gap-1" href="#">
-<span>Baca</span>
-<span class="material-symbols-outlined text-sm">open_in_new</span>
-</a>
-</div>
-</article>
-<!-- 10. Babad Tanah Jawi -->
-<article class="neo-card p-4 bg-white border-2 border-brand-dark shadow-solid flex flex-col justify-between group hover:-translate-y-1 transition-all">
-<div>
-<div class="relative w-full h-48 rounded-2xl border-2 border-brand-dark bg-brand-lavender overflow-hidden flex items-center justify-center mb-4 p-4">
-<div class="absolute top-2 left-2 flex gap-1 z-10">
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-brand-coral text-white font-extrabold border border-brand-dark">Kronik</span>
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-white text-brand-dark font-bold border border-brand-dark">PDF</span>
-</div>
-<button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white border border-brand-dark flex items-center justify-center hover:bg-brand-coral-light transition-colors z-10" title="Simpan ke Rak">
-<span class="material-symbols-outlined text-sm">bookmark_border</span>
-</button>
-<div class="w-28 h-40 bg-white border-2 border-brand-dark rounded-r-lg shadow-md p-2 flex flex-col justify-between transform group-hover:-rotate-1 transition-transform">
-<div class="border-b border-brand-dark/20 pb-1">
-<span class="text-[8px] font-bold text-brand-coral block uppercase">Naskah Klasik</span>
-<h4 class="font-display font-extrabold text-[11px] text-brand-dark leading-tight mt-0.5">Babad Tanah Jawi</h4>
-</div>
-<div class="text-[8px] font-bold text-brand-muted">Anonim / Keraton</div>
-</div>
-</div>
-<div class="space-y-1 mb-3">
-<div class="flex items-center justify-between text-xs font-bold">
-<span class="text-brand-dark font-bold">Naskah Mataram</span>
-<span class="flex items-center gap-1 text-brand-dark bg-brand-yellow/40 px-2 py-0.5 rounded-full border border-brand-dark/20">
-<span class="text-xs">★</span> 4.7
-                </span>
-</div>
-<h3 class="font-display font-extrabold text-lg text-brand-dark group-hover:text-brand-green transition-colors">
-                Babad Tanah Jawi
-              </h3>
-<p class="text-xs text-brand-muted font-medium line-clamp-2">
-                Silsilah raja-raja dan mitologi pembentukan kerajaan di pulau Jawa dari era Hindu ke Islam.
-              </p>
-</div>
-</div>
-<div class="pt-3 border-t-2 border-brand-dark/10 flex items-center justify-between gap-2 mt-auto">
-<span class="text-[11px] font-bold text-brand-muted">520 Halaman</span>
-<a class="neo-pill px-3 py-1.5 text-xs bg-brand-yellow hover:bg-[#ebb035] text-brand-dark font-bold border-2 border-brand-dark shadow-xs flex items-center gap-1" href="#">
-<span>Baca</span>
-<span class="material-symbols-outlined text-sm">open_in_new</span>
-</a>
-</div>
-</article>
-<!-- 11. Si Doel Anak Betawi -->
-<article class="neo-card p-4 bg-white border-2 border-brand-dark shadow-solid flex flex-col justify-between group hover:-translate-y-1 transition-all">
-<div>
-<div class="relative w-full h-48 rounded-2xl border-2 border-brand-dark bg-brand-coral-light overflow-hidden flex items-center justify-center mb-4 p-4">
-<div class="absolute top-2 left-2 flex gap-1 z-10">
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-brand-yellow text-brand-dark font-extrabold border border-brand-dark">Remaja</span>
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-white text-brand-dark font-bold border border-brand-dark">EPUB</span>
-</div>
-<button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white border border-brand-dark flex items-center justify-center hover:bg-brand-coral-light transition-colors z-10" title="Simpan ke Rak">
-<span class="material-symbols-outlined text-sm">bookmark_border</span>
-</button>
-<div class="w-28 h-40 bg-white border-2 border-brand-dark rounded-r-lg shadow-md p-2 flex flex-col justify-between transform group-hover:rotate-1 transition-transform">
-<div class="border-b border-brand-dark/20 pb-1">
-<span class="text-[8px] font-bold text-brand-yellow block uppercase">Cerita Rakyat</span>
-<h4 class="font-display font-extrabold text-[11px] text-brand-dark leading-tight mt-0.5">Si Doel</h4>
-</div>
-<div class="text-[8px] font-bold text-brand-muted">Aman Datuk M.</div>
-</div>
-</div>
-<div class="space-y-1 mb-3">
-<div class="flex items-center justify-between text-xs font-bold">
-<span class="text-brand-coral font-bold">Aman Datuk Madjoindo</span>
-<span class="flex items-center gap-1 text-brand-dark bg-brand-yellow/40 px-2 py-0.5 rounded-full border border-brand-dark/20">
-<span class="text-xs">★</span> 4.5
-                </span>
-</div>
-<h3 class="font-display font-extrabold text-lg text-brand-dark group-hover:text-brand-green transition-colors">
-                Si Doel Anak Betawi
-              </h3>
-<p class="text-xs text-brand-muted font-medium line-clamp-2">
-                Potret ceria keseharian bocah Batavia tempo dulu mempertahankan adat dan semangat belajar.
-              </p>
-</div>
-</div>
-<div class="pt-3 border-t-2 border-brand-dark/10 flex items-center justify-between gap-2 mt-auto">
-<span class="text-[11px] font-bold text-brand-muted">190 Halaman</span>
-<a class="neo-pill px-3 py-1.5 text-xs bg-brand-yellow hover:bg-[#ebb035] text-brand-dark font-bold border-2 border-brand-dark shadow-xs flex items-center gap-1" href="#">
-<span>Baca</span>
-<span class="material-symbols-outlined text-sm">open_in_new</span>
-</a>
-</div>
-</article>
-<!-- 12. Hikayat Hang Tuah -->
-<article class="neo-card p-4 bg-white border-2 border-brand-dark shadow-solid flex flex-col justify-between group hover:-translate-y-1 transition-all">
-<div>
-<div class="relative w-full h-48 rounded-2xl border-2 border-brand-dark bg-brand-green-light overflow-hidden flex items-center justify-center mb-4 p-4">
-<div class="absolute top-2 left-2 flex gap-1 z-10">
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-brand-green text-white font-extrabold border border-brand-dark">Epik Melayu</span>
-<span class="neo-pill px-2 py-0.5 text-[10px] bg-white text-brand-dark font-bold border border-brand-dark">PDF</span>
-</div>
-<button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white border border-brand-dark flex items-center justify-center hover:bg-brand-coral-light transition-colors z-10" title="Simpan ke Rak">
-<span class="material-symbols-outlined text-sm">bookmark_border</span>
-</button>
-<div class="w-28 h-40 bg-white border-2 border-brand-dark rounded-r-lg shadow-md p-2 flex flex-col justify-between transform group-hover:-rotate-1 transition-transform">
-<div class="border-b border-brand-dark/20 pb-1">
-<span class="text-[8px] font-bold text-brand-green block uppercase">Sastra Melayu</span>
-<h4 class="font-display font-extrabold text-[11px] text-brand-dark leading-tight mt-0.5">Hikayat Hang Tuah</h4>
-</div>
-<div class="text-[8px] font-bold text-brand-muted">Arsip Klasik</div>
-</div>
-</div>
-<div class="space-y-1 mb-3">
-<div class="flex items-center justify-between text-xs font-bold">
-<span class="text-brand-green font-bold">Sastra Maritim Melayu</span>
-<span class="flex items-center gap-1 text-brand-dark bg-brand-yellow/40 px-2 py-0.5 rounded-full border border-brand-dark/20">
-<span class="text-xs">★</span> 4.8
-                </span>
-</div>
-<h3 class="font-display font-extrabold text-lg text-brand-dark group-hover:text-brand-green transition-colors">
-                Hikayat Hang Tuah
-              </h3>
-<p class="text-xs text-brand-muted font-medium line-clamp-2">
-                Kepahlawanan laksamana legendaris Malaka mempertahankan marwah kesultanan di selat Malaka.
-              </p>
-</div>
-</div>
-<div class="pt-3 border-t-2 border-brand-dark/10 flex items-center justify-between gap-2 mt-auto">
-<span class="text-[11px] font-bold text-brand-muted">480 Halaman</span>
-<a class="neo-pill px-3 py-1.5 text-xs bg-brand-yellow hover:bg-[#ebb035] text-brand-dark font-bold border-2 border-brand-dark shadow-xs flex items-center gap-1" href="#">
-<span>Baca</span>
-<span class="material-symbols-outlined text-sm">open_in_new</span>
-</a>
-</div>
-</article>
-</div>
-<!-- PAGINATION BAR (Playful Neo-Pill UI) -->
-<div class="neo-card p-4 sm:p-5 bg-white border-2 border-brand-dark shadow-solid flex flex-col sm:flex-row items-center justify-between gap-4">
-<button class="neo-pill px-4 py-2 bg-white hover:bg-brand-cream text-brand-dark text-xs font-bold border-2 border-brand-dark shadow-xs flex items-center gap-1 w-full sm:w-auto justify-center">
-<span class="material-symbols-outlined text-sm">arrow_back</span>
-<span>Sebelumnya</span>
-</button>
-<div class="flex items-center gap-1.5 overflow-x-auto text-xs font-bold">
-<button class="w-8 h-8 rounded-full bg-brand-yellow text-brand-dark border-2 border-brand-dark font-extrabold flex items-center justify-center shadow-xs">1</button>
-<button class="w-8 h-8 rounded-full bg-white hover:bg-brand-yellow-light text-brand-dark border border-brand-dark/30 flex items-center justify-center">2</button>
-<button class="w-8 h-8 rounded-full bg-white hover:bg-brand-yellow-light text-brand-dark border border-brand-dark/30 flex items-center justify-center">3</button>
-<button class="w-8 h-8 rounded-full bg-white hover:bg-brand-yellow-light text-brand-dark border border-brand-dark/30 hidden sm:flex items-center justify-center">4</button>
-<span class="px-1 text-brand-muted">...</span>
-<button class="w-8 h-8 rounded-full bg-white hover:bg-brand-yellow-light text-brand-dark border border-brand-dark/30 flex items-center justify-center">118</button>
-</div>
-<button class="neo-pill px-4 py-2 bg-white hover:bg-brand-cream text-brand-dark text-xs font-bold border-2 border-brand-dark shadow-xs flex items-center gap-1 w-full sm:w-auto justify-center">
-<span>Berikutnya</span>
-<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</aside>
+<!-- RIGHT: QUICK FILTERS, BOOK GRID, LOAD MORE -->
+<div class="lg:col-span-9 space-y-6">
+<!-- QUICK FILTER PILLS (CAROUSEL / WRAP) -->
+<section class="w-full">
+<div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none text-xs font-bold no-scrollbar">
+<button class="neo-pill px-4 py-2 border-2 border-brand-dark whitespace-nowrap" :class="filters.kategori.length === 0 ? 'bg-brand-dark text-white shadow-[2px_2px_0px_#F4B942]' : 'bg-white text-brand-dark shadow-sm hover:bg-brand-coral-light'" type="button" @click="selectAllKategori">
+        Semua ({{ totalBooks > 0 ? numberFormat.format(totalBooks) : '…' }})
+      </button>
+<button v-for="(cat, i) in categories" :key="cat.slug" class="neo-pill px-4 py-2 border-2 border-brand-dark whitespace-nowrap" :class="filters.kategori.includes(cat.slug) ? 'bg-brand-dark text-white shadow-[2px_2px_0px_#F4B942]' : ['bg-white text-brand-dark shadow-sm', pillHoverClasses[i % pillHoverClasses.length]]" type="button" @click="pillClick(cat)">
+        {{ cat.name }} <span class="ml-1 text-[11px] opacity-75 font-normal">{{ cat.books_count }}</span>
+      </button>
+</div>
+</section>
+<!-- BOOK CARDS GRID (from /api/buku) -->
+<div class="grid grid-cols-2 gap-4 sm:gap-6">
+<template v-if="loading && !books.length">
+<div class="neo-card p-8 bg-white border-2 border-brand-dark shadow-solid col-span-2 text-center text-sm font-bold text-brand-muted">
+              Memuat buku…
+            </div>
+</template>
+<template v-else-if="error">
+<div class="neo-card p-8 bg-white border-2 border-brand-dark shadow-solid col-span-2 text-center space-y-3">
+<p class="text-sm font-bold text-brand-coral">{{ error }}</p>
+<button class="neo-pill px-4 py-2 bg-brand-yellow hover:bg-[#ebb035] text-brand-dark text-xs font-bold border-2 border-brand-dark" type="button" @click="fetchBooks">Coba Lagi</button>
+</div>
+</template>
+<template v-else-if="!books.length">
+<div class="neo-card p-8 bg-white border-2 border-brand-dark shadow-solid col-span-2 text-center space-y-3">
+<span class="material-symbols-outlined text-4xl text-brand-muted">search_off</span>
+<p class="text-sm font-bold text-brand-dark">Tidak ada buku yang cocok dengan filter saat ini.</p>
+<button class="neo-pill px-4 py-2 bg-brand-yellow hover:bg-[#ebb035] text-brand-dark text-xs font-bold border-2 border-brand-dark" type="button" @click="resetFilters">Reset Filter</button>
+</div>
+</template>
+<BookCard v-for="book in books" :key="book.id" :book="book" />
+</div>
+<!-- LOAD MORE -->
+<div v-if="loadMoreError" class="text-center text-xs font-bold text-brand-coral" role="alert">{{ loadMoreError }}</div>
+<div v-if="hasMore" class="flex justify-center pt-1">
+<button class="neo-pill px-8 py-3 bg-brand-yellow hover:bg-[#ebb035] text-brand-dark text-sm font-extrabold border-2 border-brand-dark shadow-solid flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed" type="button" :disabled="loadingMore" @click="loadMore">
+<span v-if="loadingMore" class="material-symbols-outlined text-base animate-spin">progress_activity</span>
+<span>{{ loadingMore ? 'Memuat…' : 'Muat Lebih Banyak' }}</span>
+<span v-if="!loadingMore" class="material-symbols-outlined text-base">expand_more</span>
 </button>
 </div>
+<div v-else-if="books.length" class="text-center text-xs font-bold text-brand-muted">
+          Semua {{ numberFormat.format(meta.total) }} buku sudah ditampilkan.
+        </div>
 </div>
 </div>
+<!-- FLOATING SIDEBAR TRIGGER (MOBILE) -->
+<button class="lg:hidden fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom))] right-4 z-40 neo-pill px-4 py-3 bg-brand-dark text-white border-2 border-brand-dark shadow-solid flex items-center gap-2 text-xs font-extrabold" type="button" aria-controls="catalog-sidebar" :aria-expanded="sidebarOpen" aria-label="Buka filter dan info katalog" @click="sidebarOpen = true">
+<span class="material-symbols-outlined text-base">tune</span>
+<span>Filter</span>
+</button>
 <!-- FLOATING WORKOUT/SIGNUP INSPIRED CALLOUT (From Image Component Center) -->
 <section class="mt-14 w-full">
 <div class="neo-card p-6 sm:p-8 bg-brand-green-light border-2 border-brand-dark shadow-solid relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
@@ -851,55 +245,341 @@
           Kontribusi Komunitas
         </div>
 <h3 class="text-2xl font-extrabold font-display text-brand-dark tracking-tight">
-          Punya Koleksi Naskah Langka atau Terjemahan Bebas?
+          Punya Naskah Domain Publik atau Karya Berlisensi Terbuka?
         </h3>
 <p class="text-xs sm:text-sm text-brand-muted font-medium leading-relaxed sm:leading-5">
-          Bantu digitalisasi ribuan naskah klasik nusantara. Tim relawan libfree siap membantu kurasi teks, OCR scanning, serta konversi EPUB ramah gawai.
+          Kirim naskah beserta tautan sumber dan bukti lisensinya. Kurator akan memeriksa metadata, sumber, serta status hak cipta sebelum naskah dapat tayang di katalog.
         </p>
 </div>
 <div class="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full md:w-auto">
-<a class="neo-pill w-full sm:w-auto px-6 py-3 bg-brand-yellow hover:bg-[#ebb035] text-brand-dark border-2 border-brand-dark font-extrabold text-xs shadow-solid text-center" href="#unggah">
+<RouterLink class="neo-pill w-full sm:w-auto px-6 py-3 bg-brand-yellow hover:bg-[#ebb035] text-brand-dark border-2 border-brand-dark font-extrabold text-xs shadow-solid text-center" to="/unggah">
           Mulai Unggah Naskah
-        </a>
-<a class="neo-pill w-full sm:w-auto px-5 py-3 bg-white hover:bg-gray-50 text-brand-dark border-2 border-brand-dark font-bold text-xs text-center shadow-xs" href="#panduan">
-          Pelajari Lisensi CC0
-        </a>
+        </RouterLink>
+<RouterLink class="neo-pill w-full sm:w-auto px-5 py-3 bg-white hover:bg-gray-50 text-brand-dark border-2 border-brand-dark font-bold text-xs text-center shadow-xs" to="/lisensi#panduan">
+          Panduan Lisensi &amp; Hak Cipta
+        </RouterLink>
 </div>
 </div>
 </section>
-</div>
 </main>
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import BookCard from '../components/BookCard.vue'
 
-// Port of the template's inline handlers (bookmark toggle + mobile filter focus),
-// scoped to this page instead of the whole document.
-const root = ref(null)
+// Halaman katalog: sidebar drawer mobile, data-driven list, dan kartu buku bersama.
+const sidebarOpen = ref(false)
 
-function onClick(event) {
-  const bookmarkBtn = event.target.closest('button[title="Simpan ke Rak"]')
-  if (bookmarkBtn) {
-    const icon = bookmarkBtn.querySelector('.material-symbols-outlined')
-    if (icon) {
-      const isSaved = icon.textContent === 'bookmark'
-      icon.textContent = isSaved ? 'bookmark_border' : 'bookmark'
-      bookmarkBtn.classList.toggle('bg-brand-yellow', !isSaved)
-      bookmarkBtn.classList.toggle('bg-white', isSaved)
-    }
-    return
+function closeSidebar() {
+  sidebarOpen.value = false
+}
+
+function handleEscape(event) {
+  if (event.key === 'Escape') closeSidebar()
+}
+
+watch(sidebarOpen, (open) => {
+  document.body.style.overflow = open ? 'hidden' : ''
+})
+
+// --- Data-driven catalog ------------------------------------------------
+const route = useRoute()
+const router = useRouter()
+
+const filters = reactive({ q: '', kategori: [], format: ['epub', 'pdf'], min_rating: 0, sort: '' })
+const searchInput = ref('')
+const categories = ref([])
+const books = ref([])
+const meta = ref({ current_page: 1, last_page: 1, per_page: 12, total: 0 })
+const loading = ref(false)
+const loadingMore = ref(false)
+const error = ref(null)
+const loadMoreError = ref(null)
+
+const numberFormat = new Intl.NumberFormat('id-ID')
+
+const ratingOptions = [
+  { value: 4.5, label: '★ 4.5+' },
+  { value: 4, label: '★ 4.0+' },
+  { value: 0, label: 'Semua' },
+]
+
+// Hover variants for the quick-filter pills (mirrors the template's palette).
+const pillHoverClasses = [
+  'hover:bg-brand-coral-light',
+  'hover:bg-brand-yellow-light',
+  'hover:bg-brand-blue-light',
+  'hover:bg-brand-green-light',
+  'hover:bg-brand-peach',
+  'hover:bg-brand-lavender',
+]
+
+const totalBooks = computed(() => categories.value.reduce((sum, cat) => sum + (cat.books_count || 0), 0))
+const isDefaultFormat = computed(() => filters.format.join(',') === 'epub,pdf')
+
+const activeTags = computed(() => {
+  const tags = []
+
+  for (const slug of filters.kategori) {
+    const category = categories.value.find((cat) => cat.slug === slug)
+    tags.push({
+      key: 'kategori-' + slug,
+      label: category ? category.name : slug,
+      classes: 'bg-brand-coral-light',
+      remove: () => toggleKategori(slug),
+    })
   }
 
-  if (event.target.closest('#toggle-filter-mobile')) {
-    const sidebar = root.value?.querySelector('aside')
-    if (!sidebar) return
-    sidebar.scrollIntoView({ behavior: 'smooth' })
-    sidebar.classList.add('ring-4', 'ring-brand-yellow')
-    setTimeout(() => sidebar.classList.remove('ring-4', 'ring-brand-yellow'), 1200)
+  if (!isDefaultFormat.value) {
+    tags.push({
+      key: 'format',
+      label: 'Format ' + (filters.format.length ? filters.format.map((f) => f.toUpperCase()).join(' • ') : 'Semua'),
+      classes: 'bg-brand-yellow-light',
+      remove: () => {
+        filters.format = ['epub', 'pdf']
+      },
+    })
+  }
+
+  if (filters.q) {
+    tags.push({
+      key: 'q',
+      label: 'Pencarian: ' + filters.q,
+      classes: 'bg-brand-green-light',
+      remove: () => {
+        filters.q = ''
+        searchInput.value = ''
+      },
+    })
+  }
+
+  if (filters.min_rating > 0) {
+    tags.push({
+      key: 'min_rating',
+      label: 'Nilai kurasi ' + filters.min_rating.toFixed(1) + '+',
+      classes: 'bg-brand-blue-light',
+      remove: () => {
+        filters.min_rating = 0
+      },
+    })
+  }
+
+  return tags
+})
+
+const rangeLabel = computed(() => {
+  if (!books.value.length) return null
+
+  return '1–' + numberFormat.format(books.value.length)
+})
+
+const hasMore = computed(() => meta.value.current_page < meta.value.last_page)
+
+// --- Query-string sync --------------------------------------------------
+function queryValue(query, key) {
+  const value = query[key]
+  return Array.isArray(value) ? value.join(',') : (value ?? '')
+}
+
+function loadFromQuery(query) {
+  const kategori = queryValue(query, 'kategori')
+
+  filters.q = queryValue(query, 'q')
+  filters.kategori = kategori ? kategori.split(',').filter(Boolean) : []
+  filters.format = 'format' in query ? queryValue(query, 'format').split(',').filter(Boolean) : ['epub', 'pdf']
+  filters.min_rating = Math.max(0, parseFloat(queryValue(query, 'min_rating')) || 0)
+  filters.sort = queryValue(query, 'sort')
+  searchInput.value = filters.q
+}
+
+function queryFromFilters() {
+  const query = {}
+
+  if (filters.q) query.q = filters.q
+  if (filters.kategori.length) query.kategori = filters.kategori.join(',')
+  if (!isDefaultFormat.value) query.format = filters.format.join(',')
+  if (filters.min_rating > 0) query.min_rating = String(filters.min_rating)
+  if (filters.sort) query.sort = filters.sort
+
+  return query
+}
+
+function queryFromRoute(query) {
+  const q = queryValue(query, 'q')
+  const kategori = queryValue(query, 'kategori')
+  const format = 'format' in query ? queryValue(query, 'format') : 'epub,pdf'
+  const minRating = Math.max(0, parseFloat(queryValue(query, 'min_rating')) || 0)
+  const sort = queryValue(query, 'sort')
+
+  const normalized = {}
+  if (q) normalized.q = q
+  if (kategori) normalized.kategori = kategori
+  if (format !== 'epub,pdf') normalized.format = format
+  if (minRating > 0) normalized.min_rating = String(minRating)
+  if (sort) normalized.sort = sort
+
+  return normalized
+}
+
+function syncUrl() {
+  router.replace({ query: queryFromFilters() })
+}
+
+// --- Data loading --------------------------------------------------------
+let fetchSeq = 0
+
+function bookParams(page) {
+  const params = new URLSearchParams()
+  if (filters.q) params.set('q', filters.q)
+  if (filters.kategori.length) params.set('kategori', filters.kategori.join(','))
+  // Format is always sent: an empty value means "no format filter".
+  params.set('format', filters.format.join(','))
+  if (filters.min_rating > 0) params.set('min_rating', String(filters.min_rating))
+  if (filters.sort) params.set('sort', filters.sort)
+  params.set('page', String(page))
+
+  return params
+}
+
+async function fetchBooks() {
+  const seq = ++fetchSeq
+  loading.value = true
+  error.value = null
+  loadMoreError.value = null
+
+  try {
+    const response = await fetch('/api/buku?' + bookParams(1).toString())
+    if (!response.ok) throw new Error('HTTP ' + response.status)
+
+    const payload = await response.json()
+    if (seq !== fetchSeq) return
+
+    books.value = payload.data
+    meta.value = payload.meta
+  } catch {
+    if (seq !== fetchSeq) return
+    error.value = 'Gagal memuat data katalog. Silakan coba lagi.'
+  } finally {
+    if (seq === fetchSeq) loading.value = false
   }
 }
 
-onMounted(() => root.value?.addEventListener('click', onClick))
-onBeforeUnmount(() => root.value?.removeEventListener('click', onClick))
+async function loadMore() {
+  if (loading.value || loadingMore.value || !hasMore.value) return
+
+  const seq = fetchSeq
+  loadingMore.value = true
+  loadMoreError.value = null
+
+  try {
+    const response = await fetch('/api/buku?' + bookParams(meta.value.current_page + 1).toString())
+    if (!response.ok) throw new Error('HTTP ' + response.status)
+
+    const payload = await response.json()
+    if (seq !== fetchSeq) return
+
+    const existing = new Set(books.value.map((book) => book.id))
+    books.value = [...books.value, ...payload.data.filter((book) => !existing.has(book.id))]
+    meta.value = payload.meta
+  } catch {
+    if (seq !== fetchSeq) return
+    loadMoreError.value = 'Gagal memuat buku berikutnya. Silakan coba lagi.'
+  } finally {
+    loadingMore.value = false
+  }
+}
+
+async function fetchCategories() {
+  try {
+    const response = await fetch('/api/kategori')
+    if (!response.ok) throw new Error('HTTP ' + response.status)
+
+    const payload = await response.json()
+    categories.value = payload.data
+  } catch {
+    categories.value = []
+  }
+}
+
+// --- Filter actions ------------------------------------------------------
+function submitSearch() {
+  filters.q = searchInput.value.trim()
+}
+
+function selectAllKategori() {
+  filters.kategori = []
+}
+
+function pillClick(category) {
+  const isAlone = filters.kategori.length === 1 && filters.kategori[0] === category.slug
+  filters.kategori = isAlone ? [] : [category.slug]
+}
+
+function toggleKategori(slug) {
+  filters.kategori = filters.kategori.includes(slug)
+    ? filters.kategori.filter((item) => item !== slug)
+    : [...filters.kategori, slug]
+}
+
+function toggleFormat(value) {
+  filters.format = filters.format.includes(value)
+    ? filters.format.filter((item) => item !== value)
+    : [...filters.format, value]
+}
+
+function onSortChange(event) {
+  filters.sort = event.target.value
+}
+
+function setMinRating(value) {
+  filters.min_rating = filters.min_rating === value ? 0 : value
+}
+
+function resetFilters() {
+  filters.q = ''
+  searchInput.value = ''
+  filters.kategori = []
+  filters.format = ['epub', 'pdf']
+  filters.min_rating = 0
+  filters.sort = ''
+}
+
+// --- Lifecycle -----------------------------------------------------------
+let stopFiltersWatch = null
+let stopRouteWatch = null
+
+onMounted(() => {
+  loadFromQuery(route.query)
+  fetchCategories()
+  fetchBooks()
+  window.addEventListener('keydown', handleEscape)
+
+  stopFiltersWatch = watch(
+    filters,
+    () => {
+      syncUrl()
+      fetchBooks()
+    },
+    { deep: true },
+  )
+
+  stopRouteWatch = watch(
+    () => route.query,
+    (query) => {
+      // Ignore the query updates produced by syncUrl() itself.
+      if (JSON.stringify(queryFromRoute(query)) === JSON.stringify(queryFromFilters())) return
+      loadFromQuery(query)
+    },
+  )
+})
+
+onBeforeUnmount(() => {
+  stopFiltersWatch?.()
+  stopRouteWatch?.()
+  window.removeEventListener('keydown', handleEscape)
+  document.body.style.overflow = ''
+})
 </script>
+

@@ -25,8 +25,8 @@ In agent shells (`AI_AGENT`, `OPENCODE*`, etc.), `php artisan test` / `vendor/bi
 
 ## Frontend (Vue + Tailwind) — fidelity rules, jangan "dirapikan"
 
-- Struktur: `resources/js/app.js` (entry) → `App.vue` (layout: ambient bg + navbar + `<RouterView/>` + footer + mobile nav) → `router.js` → `pages/{Home,Katalog,BookDetail}.vue`. `routes/web.php` hanya merender shell SPA (`/`, `/katalog`, `/buku/{slug}` + fallback 404); navigasi sepenuhnya ditangani Vue Router (history mode — server harus me-render `resources/views/app.blade.php` untuk semua URL tersebut).
-- `public/templates/*/code.html` adalah **sumber referensi statis** (3 halaman asli: home, katalog, detail buku). Halaman Vue diekstrak dari file itu; kalau template di-update, port manual perubahannya ke `.vue` terkait (elemen bersama: `components/MainNavbar|MainFooter|AmbientBackground|MobileFloatingNav.vue`).
+- Struktur: `resources/js/app.js` (entry) → `App.vue` (layout: ambient bg + navbar + `<RouterView/>` + footer) → `router.js` → `pages/*.vue`. `routes/web.php` merender shell SPA lewat `PageController` (ditambah metadata SEO per route) dan fallback 404; navigasi tetap ditangani Vue Router (history mode — server harus me-render `resources/views/app.blade.php` untuk semua URL tersebut).
+- `public/templates/*/code.html` adalah **sumber referensi statis** (3 halaman asli: home, katalog, detail buku). Halaman Vue diekstrak dari file itu; kalau template di-update, port manual perubahannya ke `.vue` terkait (elemen bersama: `components/MainNavbar|MainFooter|AmbientBackground.vue`).
 - `vite.config.js` menyetel `template.whitespace: 'preserve'` agar Vue mempertahankan whitespace persis seperti HTML asli — jangan dihapus.
 - `resources/css/app.css` mem-port konfigurasi Tailwind CDN v3 template. Urutan layer eksplisit `fonts < theme < base < components < utilities`:
   - Google Fonts (Plus Jakarta Sans, Space Grotesk, Material Symbols Outlined) di-`@import` dari CSS dengan `layer(fonts)`; blade hanya menyisakan `preconnect`. Ini penting: CSS Google menetapkan `.material-symbols-outlined { font-size: 24px }`, jadi harus kalah dari utility `text-sm`/`text-base` seperti di template asli. Jangan pindahkan `<link>` font kembali ke blade.
@@ -38,7 +38,19 @@ In agent shells (`AI_AGENT`, `OPENCODE*`, etc.), `php artisan test` / `vendor/bi
 - Beberapa class di halaman sengaja ditambah agar cascade v3 tereplikasi: `sm:leading-*`/`lg:leading-*` pada heading/paragraf ber-`sm:text-*` (di v3 utility font-size responsif menimpa `leading-*` dasar), dan `mt-8` pada pagination katalog dihapus (di v3 `space-y-6` menang atas `mt-8`). Jangan "rapikan" tanpa membandingkan ulang dengan `public/templates`.
 - Container desktop sengaja dilebarkan dari template: `max-w-8xl` (token `--container-8xl: 90rem` = 1440px di `app.css`), dipakai di `<main>` ketiga halaman + navbar + footer. Ubah token itu untuk menyetel lebar; jangan dikembalikan ke `max-w-7xl` tanpa permintaan.
 - Interaksi (tab detail, bookmark, copy kutipan, share, filter katalog, quick-tag search) adalah port handler DOM vanilla di `<script setup>` tiap page — refactor ke state reaktif kalau halaman sudah dijadikan data-driven.
+- Reader `/baca/:slug` bersifat hybrid: PDF memakai `pdfjs-dist` + `page-flip` (`components/PdfBookReader.vue`, halaman dirender lazy ke `<img>` dengan window cache ±3 halaman), EPUB memakai `vue-book-reader`/foliate-js (`components/EpubBookReader.vue`). Keduanya di-`defineAsyncComponent` di `Reader.vue` supaya chunk-nya tidak membebani bundle utama. Buku tanpa naskah (atau format tak didukung) tetap memakai reader teks per bab; tombol "Baca versi teks" muncul kalau buku punya keduanya. Progres perangkat disimpan di `localStorage` (`libfree:reader:<slug>`, field `page`/`cfi`/`mode`).
+- Naskah dibaca lewat `GET /api/buku/{slug}/berkas` (`DownloadController@read`) yang mengirim `Content-Disposition: inline` + dukungan HTTP Range; `GET .../unduh` tetap attachment. `/api/buku/{slug}/baca` mengekspos `has_manuscript` dan `manuscript` (`format`, `url`, `name`, `size`, `mime`) hanya untuk PDF/EPUB yang ada di disk.
+- CSP produksi (`SecurityHeaders`) mengizinkan `worker-src 'self' blob:`, `frame-src 'self' blob:`, dan `blob:` pada `style-src`/`font-src`/`media-src`/`connect-src` karena foliate-js memuat section EPUB dan asetnya dari blob di dalam iframe.
 - Dev `.env` memakai session/cache/queue berbasis database → `php artisan migrate` dulu sebelum menguji alur itu. Frontend: `npm install` dulu (tidak ada lockfile), `npm run dev` untuk HMR (butuh `php artisan serve` juga).
+
+## Production, SEO & operasional
+
+- Konfigurasi produksi: `.env.production.example` (APP_ENV=production, debug off, HTTPS, cookie Secure/encrypt, Redis, SMTP, `TRUSTED_PROXIES`, backup). Salin ke `.env` di server lalu ikuti `docs/DEPLOYMENT.md` (build, migrasi, `php artisan optimize`, queue systemd, cron scheduler, Nginx/PHP-FPM).
+- SEO dirender server-side lewat `app/Support/Seo.php` + `PageController` + `resources/views/app.blade.php`; sisi klien `resources/js/lib/seo.js` dan `router.afterEach` memperbarui tag yang sama saat navigasi. Halaman privat/auth/reader/404 memakai `noindex`. `BookDetail.vue`/`Reader.vue` memanggil `setSeo()` setelah fetch.
+- Crawler: `GET /robots.txt` dan `GET /sitemap.xml` dibuat `SitemapController` (sitemap hanya berisi buku `published`). `GET /health` (DB/cache/storage/queue) untuk uptime; `/up` tetap tersedia dari Laravel.
+- Keamanan respons: middleware `SecurityHeaders` di-append ke grup `web` (nosniff, DENY frame, Referrer-Policy, Permissions-Policy, COOP). CSP dan HSTS hanya dikirim di production/HTTPS.
+- Backup: `scripts/backup.sh` (DB + `storage/app/private`, retensi, opsi S3). Jadwalkan lewat cron; prosedur restore ada di `docs/BACKUP.md`, monitoring di `docs/MONITORING.md`.
+- Route cache aman (`php artisan route:cache`) karena action route memakai controller, bukan closure. Setelah deploy: `php artisan queue:restart`.
 
 ## Instruction files
 

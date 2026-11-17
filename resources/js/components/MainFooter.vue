@@ -1,7 +1,7 @@
 <template>
 <!-- BEGIN: MainFooter -->
 <!-- Rounded white container with crisp black outline and rich sitemap -->
-<footer class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 lg:pb-12" data-purpose="site-footer">
+<footer class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 pb-12" data-purpose="site-footer">
 <div class="neo-card p-8 sm:p-12 bg-white shadow-solid">
 <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
 <!-- Left: Brand info & Newsletter -->
@@ -17,15 +17,15 @@
 <p class="text-sm text-brand-muted font-medium leading-relaxed max-w-sm">
             Inisiatif perpustakaan nirkabel mandiri untuk merawat literasi, menyediakan naskah klasik nusantara, dan membebaskan akses pengetahuan untuk semua anak bangsa.
           </p>
-<!-- Newsletter Box -->
+<!-- Newsletter / contact box -->
 <div class="pt-2">
-<span class="text-xs font-bold text-brand-dark block mb-2">Langganan Rekomendasi Buku Mingguan:</span>
-<form action="#" class="flex gap-2 max-w-sm">
-<input aria-label="Email langganan buletin" class="neo-pill px-4 py-2 text-xs sm:text-sm bg-brand-cream border-2 border-brand-dark w-full focus:ring-0 focus:border-brand-dark" placeholder="nama@email.com" type="email">
-<button class="neo-pill bg-brand-yellow hover:bg-[#ebb035] text-brand-dark px-4 py-2 text-xs font-bold shrink-0" type="submit">
-                Langganan
-              </button>
-</form>
+<div class="rounded-2xl border-2 border-brand-dark bg-brand-cream p-4 space-y-2 max-w-sm">
+<p class="text-xs font-extrabold text-brand-dark">Ada pertanyaan atau usulan koleksi?</p>
+<p class="text-[11px] font-semibold text-brand-muted leading-relaxed">
+                Kirim surel ke tim kurator. Kami membalas pada hari kerja.
+              </p>
+<a class="inline-flex text-[11px] font-extrabold text-brand-dark underline hover:text-brand-green" href="mailto:halo@libfree.id">halo@libfree.id</a>
+</div>
 </div>
 </div>
 <!-- Right: Links Columns -->
@@ -33,21 +33,19 @@
 <div class="space-y-3">
 <h4 class="font-display font-extrabold text-base text-brand-dark">Jelajahi</h4>
 <ul class="space-y-2 text-xs sm:text-sm font-semibold text-brand-muted">
-<li><RouterLink class="hover:text-brand-coral transition-colors" to="/katalog">Buku Terpopuler</RouterLink></li>
+<li><RouterLink class="hover:text-brand-coral transition-colors" to="/katalog">Jelajahi Katalog</RouterLink></li>
 <li><RouterLink class="hover:text-brand-coral transition-colors" to="/#kategori">Semua Kategori</RouterLink></li>
-<li><RouterLink class="hover:text-brand-coral transition-colors" to="/#koleksi-khusus">Klasik Balai Pustaka</RouterLink></li>
-<li><RouterLink class="hover:text-brand-coral transition-colors" to="/#koleksi-khusus">Cerita Dongeng Anak</RouterLink></li>
-<li><RouterLink class="hover:text-brand-coral transition-colors" to="/#peringkat">Indeks Penulis</RouterLink></li>
+<li><RouterLink class="hover:text-brand-coral transition-colors" to="/#koleksi-khusus">Koleksi Khusus</RouterLink></li>
+<li><RouterLink class="hover:text-brand-coral transition-colors" to="/#peringkat">Peringkat Buku</RouterLink></li>
 </ul>
 </div>
 <div class="space-y-3">
 <h4 class="font-display font-extrabold text-base text-brand-dark">Komunitas</h4>
 <ul class="space-y-2 text-xs sm:text-sm font-semibold text-brand-muted">
-<li><RouterLink class="hover:text-brand-green transition-colors" to="/#unggah">Unggah Naskah</RouterLink></li>
-<li><RouterLink class="hover:text-brand-green transition-colors" to="/#panduan">Panduan Hak Cipta</RouterLink></li>
-<li><RouterLink class="hover:text-brand-green transition-colors" to="/#relawan">Program Relawan</RouterLink></li>
-<li><RouterLink class="hover:text-brand-green transition-colors" to="/#donasi">Donasi Server</RouterLink></li>
-<li><RouterLink class="hover:text-brand-green transition-colors" to="/#api">API Pengembang</RouterLink></li>
+<li><RouterLink class="hover:text-brand-green transition-colors" to="/unggah">Unggah Naskah</RouterLink></li>
+<li><RouterLink class="hover:text-brand-green transition-colors" to="/lisensi#panduan">Panduan Hak Cipta</RouterLink></li>
+<li><RouterLink class="hover:text-brand-green transition-colors" to="/lisensi#creative-commons">Lisensi Creative Commons</RouterLink></li>
+<li><RouterLink class="hover:text-brand-green transition-colors" to="/lisensi#takedown">Pengajuan Takedown</RouterLink></li>
 </ul>
 </div>
 <div class="space-y-3">
@@ -55,9 +53,10 @@
 <ul class="space-y-2 text-xs sm:text-sm font-semibold text-brand-muted">
 <li><RouterLink class="hover:text-brand-blue transition-colors" to="/#tentang">Visi &amp; Misi</RouterLink></li>
 <li><RouterLink class="hover:text-brand-blue transition-colors" to="/#faq">Pertanyaan Umum</RouterLink></li>
-<li><RouterLink class="hover:text-brand-blue transition-colors" to="/#kebijakan">Kebijakan Privasi</RouterLink></li>
-<li><RouterLink class="hover:text-brand-blue transition-colors" to="/#lisensi">Lisensi CC</RouterLink></li>
-<li><RouterLink class="hover:text-brand-blue transition-colors" to="/#kontak">Hubungi Tim</RouterLink></li>
+<li><RouterLink class="hover:text-brand-blue transition-colors" to="/kebijakan-privasi">Kebijakan Privasi</RouterLink></li>
+<li><RouterLink class="hover:text-brand-blue transition-colors" to="/syarat-ketentuan">Syarat &amp; Ketentuan</RouterLink></li>
+<li><RouterLink class="hover:text-brand-blue transition-colors" to="/lisensi">Lisensi &amp; Hak Cipta</RouterLink></li>
+<li><a class="hover:text-brand-blue transition-colors" href="mailto:halo@libfree.id">Hubungi Tim</a></li>
 </ul>
 </div>
 </div>
@@ -65,17 +64,21 @@
 <!-- Bottom Bar -->
 <div class="mt-10 pt-6 border-t-2 border-brand-dark/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-bold text-brand-muted">
 <div>
-          © 2024 libfree. Dibuat dengan cinta untuk literasi Indonesia. Semua naskah berlisensi domain publik atau Creative Commons.
+          © {{ currentYear }} libfree. Dibuat dengan cinta untuk literasi Indonesia. Semua naskah yang tayang telah melewati audit lisensi.
         </div>
-<div class="flex items-center gap-4 text-brand-dark">
-<a class="hover:underline" href="#">Twitter/X</a>
+<div class="flex items-center gap-3 text-brand-dark">
+<a class="hover:underline" href="mailto:halo@libfree.id">Email</a>
 <span>•</span>
-<a class="hover:underline" href="#">Instagram</a>
+<RouterLink class="hover:underline" to="/lisensi">Lisensi</RouterLink>
 <span>•</span>
-<a class="hover:underline" href="#">GitHub</a>
+<RouterLink class="hover:underline" to="/kebijakan-privasi">Privasi</RouterLink>
 </div>
 </div>
 </div>
 </footer>
 <!-- END: MainFooter -->
 </template>
+
+<script setup>
+const currentYear = new Date().getFullYear()
+</script>

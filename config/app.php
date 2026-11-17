@@ -56,6 +56,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | HTTPS and Proxy Handling
+    |--------------------------------------------------------------------------
+    |
+    | When the app is served over HTTPS (directly or behind a reverse proxy)
+    | generated URLs should use the same scheme. Set TRUSTED_PROXIES as a real
+    | system environment variable when the config cache is enabled.
+    |
+    */
+
+    'force_https' => env('APP_FORCE_HTTPS', true),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
